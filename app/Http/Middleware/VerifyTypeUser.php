@@ -2,11 +2,11 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\Instituicoe;
 use Closure;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
-use Illuminate\Support\Facades\Auth;
+use App\Models\User;
+use App\Models\Institution;
 
 class VerifyTypeUser
 {
@@ -27,7 +27,8 @@ class VerifyTypeUser
             if (in_array($user->type_id, [1, 2, 3])) {
                 return $next($request);
             }
-        
+
+            // Caso contrário, negue o acesso
             return response()->json(['message' => 'Access Denied.'], 403);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Unauthorized'], 401);

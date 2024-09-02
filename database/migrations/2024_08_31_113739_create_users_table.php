@@ -19,10 +19,8 @@ class CreateUsersTable extends Migration
             $table->string('email', 100);
             $table->string('senha', 12);
             $table->integer('type_id');
-            $table->unsignedBigInteger('instituicao_id');
             $table->timestamps();
-
-            $table->foreign('instituicao_id')->references('id')->on('instituicoes')->onDelete('cascade');
+            
         });
     }
 

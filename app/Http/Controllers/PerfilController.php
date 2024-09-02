@@ -16,7 +16,7 @@ class PerfilController extends Controller
         
 
         if ($typeId == 3) {
-            $instituicao = Instituicoe::where('id', $Id)->get();
+            $instituicao = User::where('id', $Id)->get();
             return response()->json($instituicao);
         }
 

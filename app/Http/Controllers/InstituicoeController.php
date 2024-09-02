@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Instituicoe;
+use App\Models\User;
 use App\Http\Requests\StoreInstituicoeRequest;
 use App\Http\Requests\UpdateInstituicoeRequest;
 
@@ -45,7 +45,7 @@ class InstituicoeController extends Controller
      * @param  \App\Models\Instituicoe  $instituicoe
      * @return \Illuminate\Http\Response
      */
-    public function show(Instituicoe $instituicoe)
+    public function show(User $instituicoe)
     {
         //
     }
@@ -56,7 +56,7 @@ class InstituicoeController extends Controller
      * @param  \App\Models\Instituicoe  $instituicoe
      * @return \Illuminate\Http\Response
      */
-    public function edit(Instituicoe $instituicoe)
+    public function edit(User $instituicoe)
     {
         //
     }
@@ -68,7 +68,7 @@ class InstituicoeController extends Controller
      * @param  \App\Models\Instituicoe  $instituicoe
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateInstituicoeRequest $request, Instituicoe $instituicoe)
+    public function update(UpdateInstituicoeRequest $request, User $instituicoe)
     {
         //
     }
@@ -79,7 +79,7 @@ class InstituicoeController extends Controller
      * @param  \App\Models\Instituicoe  $instituicoe
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Instituicoe $instituicoe)
+    public function destroy(User $instituicoe)
     {
         //
     }

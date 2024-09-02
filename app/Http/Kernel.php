@@ -66,6 +66,5 @@ class Kernel extends HttpKernel
         'jwt.auth' => \Tymon\JWTAuth\Http\Middleware\Authenticate::class,
         'verifyUserType' => \App\Http\Middleware\VerifyTypeUser::class,
         'retrieve.user' => \App\Http\Middleware\RetrieveUserByToken::class,
-        'custom.jwt.auth' => \App\Http\Middleware\CustomJwtAuth::class,
     ];
 }

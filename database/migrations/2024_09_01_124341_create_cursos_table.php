@@ -21,7 +21,7 @@ class CreateCursosTable extends Migration
             $table->unsignedBigInteger('instituicao_id');
             $table->timestamps();
 
-            $table->foreign('instituicao_id')->references('id')->on('instituicoes')->onDelete('cascade');
+            $table->foreign('instituicao_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

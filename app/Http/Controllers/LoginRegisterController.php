@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Hash;
-use App\Models\Instituicoe;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -18,7 +17,7 @@ class LoginRegisterController extends Controller
             'senha' => 'required',
         ]);
 
-        $email = Instituicoe::where('email', $request->email)->first();
+        $email = User::where('email', $request->email)->first();
         
         if ($email) {
             return response()->json([
@@ -27,7 +26,7 @@ class LoginRegisterController extends Controller
             ]);
         }
         else {
-            $instituicao = Instituicoe::create([
+            $instituicao = User::create([
                 'nome' => $request->nome,
                 'email' => $request->email,
                 'senha' => Hash::make($request->senha),
@@ -46,7 +45,6 @@ class LoginRegisterController extends Controller
             'email' => 'required|email', 
             'senha' => 'required',
             'type_id' => 'required',
-            'instituicao_id' => 'required',
         ]);
 
         $user = User::where('email', $request->email)->first();
@@ -76,7 +74,7 @@ class LoginRegisterController extends Controller
 
     public function login(Request $request) {
         $credentials = $request->validate([
-            'email'=> 'required|email',
+            'email'=> 'required',
             'senha' => 'required',
         ]);
 
@@ -92,22 +90,7 @@ class LoginRegisterController extends Controller
                 'authenticated' => true,
                 'token' => $token,
                 'type_id' => $user->type_id,
-                'entity' => 'user',
-            ]);
-        }
-        
-        $instituicao = Instituicoe::where('email', $request->email)->first();
-
-        if ($instituicao && Hash::check($request->senha, $instituicao->senha)) {
-
-            $token2 = JWTAuth::fromUser($instituicao);
-
-            return response()->json([
-                'authenticated' => true,
-                'token' => $token2,
-                'id' => $instituicao->id,
-                'type_id' => $instituicao->type_id,
-                'entity' => 'instituicao'
+                'entity' => $user,
             ]);
         }
 
