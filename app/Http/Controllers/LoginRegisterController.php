@@ -30,7 +30,8 @@ class LoginRegisterController extends Controller
             $instituicao = Instituicoe::create([
                 'nome' => $request->nome,
                 'email' => $request->email,
-                'senha' => Hash::make($request->senha)
+                'senha' => Hash::make($request->senha),
+                'type_id' => 3,
             ]);
 
             return response()->json(['autenticated' => 'true']);
@@ -99,11 +100,13 @@ class LoginRegisterController extends Controller
 
         if ($instituicao && Hash::check($request->senha, $instituicao->senha)) {
 
-            $token = JWTAuth::fromUser($instituicao);
+            $token2 = JWTAuth::fromUser($instituicao);
 
             return response()->json([
                 'authenticated' => true,
-                'token' => $token,
+                'token' => $token2,
+                'id' => $instituicao->id,
+                'type_id' => $instituicao->type_id,
                 'entity' => 'instituicao'
             ]);
         }

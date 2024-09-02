@@ -22,7 +22,10 @@ class User extends Authenticatable implements JWTSubject
      */
     public function getJWTCustomClaims()
     {
-        return [];
+        return [
+            'id' => $this->id,
+            'type_id' => $this->type_id,
+        ];
     }
 
     use HasFactory;

@@ -27,17 +27,18 @@ Route::post('/logout', 'App\Http\Controllers\LoginRegisterController@logout')->m
 //ROTAS PARA CRUD DE ALUNOS E PROFESSORES
 
 //ROTA DE REGISTO DE PROFESSOR E ALUNOS
-Route::post('/register', 'App\Http\Controllers\LoginRegisterController@register')->middleware('jwt.auth');
+Route::post('/registerUser', 'App\Http\Controllers\LoginRegisterController@register')->middleware('jwt.auth');
 
 //ROTA CRUD DE PROFESSORES E ALUNOS
-Route::apiResource('/alunos', 'App\Http\Controllers\UserController')->middleware('jwt.auth');
+Route::apiResource('/alunos', 'App\Http\Controllers\UserController')->middleware(['jwt.auth','verifyUserType']);
 Route::apiResource('/professores','App\Http\Controllers\UserController')->middleware('jwt.auth');
 
 //ROTA CRUD DE CURSOS E DISCIPLINAS
 Route::apiResource('/cursos', 'App\Http\Controllers\CursoController')->middleware('jwt.auth');
 Route::apiResource('/disciplinas', 'App\Http\Controllers\DisciplinaController')->middleware('jwt.auth');
 
-
+//ROTA PARA PEGAR O PERFIL DO UUSÁRIO
+Route::get('/perfil', 'App\Http\Controllers\PerfilController@get_perfil')->middleware(['jwt.auth', 'verifyUserType','retrieve.user']);
 
 /*
 
