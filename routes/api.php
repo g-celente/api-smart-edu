@@ -30,7 +30,7 @@ Route::post('/logout', 'App\Http\Controllers\LoginRegisterController@logout')->m
 Route::post('/registerUser', 'App\Http\Controllers\LoginRegisterController@register')->middleware('jwt.auth');
 
 //ROTA CRUD DE PROFESSORES E ALUNOS
-Route::apiResource('/alunos', 'App\Http\Controllers\UserController')->middleware(['jwt.auth','verifyUserType']);
+Route::apiResource('/alunos', 'App\Http\Controllers\UserController')->middleware('jwt.auth');
 Route::apiResource('/professores','App\Http\Controllers\UserController')->middleware('jwt.auth');
 
 //ROTA CRUD DE CURSOS E DISCIPLINAS
