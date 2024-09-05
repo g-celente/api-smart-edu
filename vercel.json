@@ -1,16 +1,11 @@
 {
     "version": 2,
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/public/index.php"
-    }
-  ],
-  "builds": [
-    {
-      "src": "public/index.php"
-    }
-  ],
+    "routes": [
+        {
+        "src": "/(.*)",
+        "dest": "/public/index.php"
+        }
+    ],
     "env": {
         "APP_ENV": "production",
         "APP_DEBUG": "true",
