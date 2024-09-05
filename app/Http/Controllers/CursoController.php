@@ -13,11 +13,18 @@ class CursoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $results = Curso::all();
+        $instituicao_id = $request->input('authenticated_user_id');
+        $cursos = Curso::where('instituicao_id', $instituicao_id)->where('id', $instituicao_id)->get();
 
-        return response()->json($results);
+        if ($cursos) {
+            return response()->json($cursos);
+        }
+        
+        return response()->json([
+            'error' => 'Nenhum curso cadastrado nessa instituicao'
+        ]);
     }
 
     /**
