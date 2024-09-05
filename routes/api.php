@@ -18,6 +18,10 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::get('/home', function() {
+    return ('Olá');
+});
+
 
 //ROTAS PARA REGISTRO E LOGIN INSTITUIÇÃO
 Route::post('/register', 'App\Http\Controllers\LoginRegisterController@registerInstituicao');
