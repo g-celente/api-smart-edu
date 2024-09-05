@@ -14,11 +14,35 @@ class DisciplinaController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $results = Disciplina::all();
+        $id = $request->input('authenticated_user_id');
 
-        return response()->json($results);
+        // Buscar todos os cursos relacionados à instituição
+        $cursos = Curso::where('instituicao_id', $id)->get();
+
+        // Verificar se há cursos
+        if ($cursos->isEmpty()) {
+            return response()->json([
+                'error' => 'nenhum curso encontrado'
+            ], 404);
+        }
+
+        // Obter os IDs dos cursos
+        $cursoIds = $cursos->pluck('id');
+
+        // Buscar as disciplinas associadas aos cursos
+        $disciplinas = Disciplina::whereIn('curso_id', $cursoIds)->get();
+
+        // Verificar se há disciplinas associadas aos cursos
+        if ($disciplinas->isEmpty()) {
+            return response()->json([
+                'error' => 'nenhuma disciplina encontrada'
+            ], 404);
+        }
+
+        // Retornar as disciplinas encontradas
+        return response()->json($disciplinas);
     }
 
     /**
@@ -39,6 +63,8 @@ class DisciplinaController extends Controller
      */
     public function store(Request $request)
     {
+        $instituicao_id = $request->input('authenticated_user_id');
+
         $credentials = $request->validate([
             'nome' => 'required', 
             'carga_horaria' => 'required',
@@ -46,7 +72,10 @@ class DisciplinaController extends Controller
             'professor_id' => 'required'
         ]);
 
-        $curso = Curso::find($request->curso_id);
+        $curso = Curso::where('instituicao_id', $instituicao_id)
+            ->where('id', $request->curso_id)
+            ->first();
+
         $professor = User::find($request->professor_id);
 
         if (!$curso || !$professor) {
@@ -69,17 +98,36 @@ class DisciplinaController extends Controller
      * @param  \App\Models\Disciplina  $disciplina
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request, $Id)
     {
-        $disciplina = Disciplina::find($id);
+        $instituicao_id = $request->input('authenticated_user_id');
 
-        if (!$disciplina) {
+        // Buscar todos os cursos relacionados à instituição
+        $cursos = Curso::where('instituicao_id', $instituicao_id)->get();
+
+        // Verificar se há cursos
+        if ($cursos->isEmpty()) {
             return response()->json([
-                'error' => 'disciplina não cadastrada'
+                'error' => 'Nenhum curso encontrado'
             ], 404);
         }
 
-        return response()->json($disciplina);
+        // Obter os IDs dos cursos
+        $cursoIds = $cursos->pluck('id');
+
+        // Buscar as disciplinas associadas aos cursos
+        $disciplinas = Disciplina::whereIn('curso_id', $cursoIds)
+                                ->where('id', $Id)
+                                ->first(); // Usa first() para buscar um único item
+
+        // Verificar se a disciplina foi encontrada
+        if (!$disciplinas) {
+            return response()->json([
+                'error' => 'Nenhuma disciplina encontrada'
+            ], 404);
+        }
+
+        return response()->json($disciplinas);
     }
 
     /**
@@ -102,11 +150,30 @@ class DisciplinaController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $disciplina = Disciplina::find($id);
+        $instituicao_id = $request->input('authenticated_user_id');
 
-        if (!$disciplina) {
+        // Buscar todos os cursos relacionados à instituição
+        $cursos = Curso::where('instituicao_id', $instituicao_id)->get();
+
+        // Verificar se há cursos
+        if ($cursos->isEmpty()) {
             return response()->json([
-                'error' => 'Disciplina não encontrada'
+                'error' => 'Nenhum curso encontrado'
+            ], 404);
+        }
+
+        // Obter os IDs dos cursos
+        $cursoIds = $cursos->pluck('id');
+
+        // Buscar as disciplinas associadas aos cursos
+        $disciplinas = Disciplina::whereIn('curso_id', $cursoIds)
+                                ->where('id', $id)
+                                ->first(); // Usa first() para buscar um único item
+
+        // Verificar se a disciplina foi encontrada
+        if (!$disciplinas) {
+            return response()->json([
+                'error' => 'Nenhuma disciplina encontrada'
             ], 404);
         }
         
@@ -117,11 +184,11 @@ class DisciplinaController extends Controller
             'professor_id' => 'sometimes|required|exists:users,id'
         ]);
 
-        $disciplina->update($validatedData);
+        $disciplinas->update($validatedData);
 
         return response()->json([
             'success' => 'Disciplina Atualizada',
-            'disciplina' => $disciplina
+            'disciplina' => $disciplinas
         ], 201);
      }
 
@@ -131,17 +198,36 @@ class DisciplinaController extends Controller
      * @param  \App\Models\Disciplina  $disciplina
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        $disciplina = Disciplina::find($id);
+        $instituicao_id = $request->input('authenticated_user_id');
 
-        if (!$disciplina) {
+        // Buscar todos os cursos relacionados à instituição
+        $cursos = Curso::where('instituicao_id', $instituicao_id)->get();
+
+        // Verificar se há cursos
+        if ($cursos->isEmpty()) {
             return response()->json([
-                'error' => 'Disciplina não encontrada'
+                'error' => 'Nenhum curso encontrado'
             ], 404);
         }
 
-        $disciplina->delete();
+        // Obter os IDs dos cursos
+        $cursoIds = $cursos->pluck('id');
+
+        // Buscar as disciplinas associadas aos cursos
+        $disciplinas = Disciplina::whereIn('curso_id', $cursoIds)
+                                ->where('id', $id)
+                                ->first(); // Usa first() para buscar um único item
+
+        // Verificar se a disciplina foi encontrada
+        if (!$disciplinas) {
+            return response()->json([
+                'error' => 'Nenhuma disciplina encontrada'
+            ], 404);
+        }
+
+        $disciplinas->delete();
 
         return response()->json([
             'success' => 'Disciplina deletada'
