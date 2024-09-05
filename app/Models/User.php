@@ -35,5 +35,6 @@ class User extends Authenticatable implements JWTSubject
         'email', 
         'senha', 
         'type_id',
+        'instituicao_id'
     ];
 }

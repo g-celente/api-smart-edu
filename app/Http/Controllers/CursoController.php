@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-Use App\Models\Instituicoe;
+Use App\Models\User;
 use App\Models\Curso;
 use Illuminate\Http\Request;
 
@@ -38,23 +38,24 @@ class CursoController extends Controller
      */
     public function store(Request $request)
     {
+        $id = $request->input('authenticated_user_id');
+
         $credentials = $request->validate([
             'nome' => 'required',
             'descricao' => 'required',
             'periodos' => 'required', 
-            'instituicao_id' => 'required'
         ]);
 
         $name = Curso::where('nome', $request->nome)
-        ->where('instituicao_id', $request->instituicao_id)->first();
+        ->where('instituicao_id', $id)->first();
 
         if ($name) {
             return response()->json([
-                'error' => 'curso já cadastrado'
+                'error' => 'curso já cadastrado nessa instituicao'
             ]);
         }
 
-        $instituicao = Instituicoe::where('id', $request->instituicao_id)->first();
+        $instituicao = User::where('id', $id)->first();
 
         if (!$instituicao) {
             return response()->json([
@@ -62,7 +63,12 @@ class CursoController extends Controller
             ]);
         }
 
-        $results = Curso::create($request->all());
+        $results = Curso::create([
+            'nome' => $request->nome,
+            'descricao' => $request->descricao,
+            'periodos' => $request->periodos,
+            'instituicao_id' => $id
+        ]);
         return response()->json([
             'success' => 'Curso cadastrado',
             'Curso' => $results
@@ -75,9 +81,10 @@ class CursoController extends Controller
      * @param  \App\Models\Curso  $curso
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request, $id)
     {
-        $cursos = Curso::find($id);
+        $instituicao_id = $request->input('authenticated_user_id');
+        $cursos = Curso::where('instituicao_id', $instituicao_id)->where('id', $id)->get();
 
         if (!$cursos) {
             return response()->json([
@@ -106,9 +113,10 @@ class CursoController extends Controller
      * @param  \App\Models\Curso  $curso
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id, Curso $curso)
+    public function update(Request $request, Curso $curso)
     {
-        $curso = Curso::find($id);
+        $instituicao_id = $request->input('authenticated_user_id');
+        $curso = Curso::where('instituicao_id', $instituicao_id)->where('id', $curso)->get();
 
         if (!$curso) {
             return response()->json([
@@ -137,9 +145,10 @@ class CursoController extends Controller
      * @param  \App\Models\Curso  $curso
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request, Curso $curso)
     {
-        $curso = Curso::find($id);
+        $instituicao_id = $request->input('authenticated_user_id');
+        $curso = Curso::where('instituicao_id', $instituicao_id)->where('id', $curso)->get();
 
         if (!$curso) {
             return response()->json([

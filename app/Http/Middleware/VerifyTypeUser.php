@@ -24,7 +24,7 @@ class VerifyTypeUser
             $user = JWTAuth::parseToken()->authenticate();
             
             // Verifique as informações do usuário na tabela 'users'
-            if (in_array($user->type_id, [1, 2, 3])) {
+            if ($user->type_id == 3) {
                 return $next($request);
             }
 

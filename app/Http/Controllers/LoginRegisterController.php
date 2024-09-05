@@ -33,7 +33,17 @@ class LoginRegisterController extends Controller
                 'type_id' => 3,
             ]);
 
-            return response()->json(['autenticated' => 'true']);
+            $token = JWTAuth::fromUser($instituicao);
+
+            return response()->json([
+                'authenticated' => true,
+                'token' => $token,
+                'user' => [
+                    "id" => $instituicao->id,
+                    "email" => $instituicao->email,
+                    "type_id" => $instituicao->type_id
+                ],
+            ]);
         }
         
 
@@ -48,6 +58,7 @@ class LoginRegisterController extends Controller
         ]);
 
         $user = User::where('email', $request->email)->first();
+        $instituicao_id = $request->input('authenticated_user_id');
 
         if ($user) {
             return response()->json([
@@ -61,12 +72,17 @@ class LoginRegisterController extends Controller
             'email' => $request->email,
             'senha' => Hash::make($request->senha),
             'type_id' => $request->type_id,
-            'instituicao_id' => $request->instituicao_id,
+            'instituicao_id' =>$instituicao_id,
         ]);
 
         return response()->json([
             'authenticate' => 'true',
             'type_id' => $request->type_id,
+            'user' => [
+                'id' => $user->id,
+                'email' => $user->email,
+                'instituicao_id' => $user->instituicao_id            
+            ]
         ]);
         
             
@@ -89,8 +105,11 @@ class LoginRegisterController extends Controller
             return response()->json([
                 'authenticated' => true,
                 'token' => $token,
-                'type_id' => $user->type_id,
-                'entity' => $user,
+                'user' => [
+                    "id" => $user->id,
+                    "email" => $user->email,
+                    "type_id" => $user->type_id
+                ],
             ]);
         }
 
