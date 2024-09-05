@@ -3,7 +3,7 @@
     "version": 2,
     "functions": {
         "api/index.php": {
-            "runtime": "vercel-php@0.6.0"
+            "runtime": "vercel-php@0.5.4"
         }
     },
     "routes": [
@@ -30,5 +30,5 @@
         "LOG_CHANNEL": "stderr",
         "SESSION_DRIVER": "cookie"
     },
-    "outputDirectory": "public"
+    "outputDirectory": "api"
 }
