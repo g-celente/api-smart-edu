@@ -36,6 +36,7 @@ Route::middleware(['jwt.auth','retrieve.user'])->group(function (){
         Route::apiResource('/professores','App\Http\Controllers\UserController');
         Route::apiResource('/cursos', 'App\Http\Controllers\CursoController');
         Route::apiResource('/disciplinas', 'App\Http\Controllers\DisciplinaController');
+        Route::apiResource('/alunosDisciplinas', 'App\Http\Controllers\AlunoDisciplinaController');
     });
     
     Route::middleware('professor')->group(function() {

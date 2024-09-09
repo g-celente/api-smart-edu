@@ -16,14 +16,23 @@ class PerfilController extends Controller
         
 
         if ($typeId == 3) {
-            $instituicao = User::where('id', $Id)->get();
-            return response()->json($instituicao);
+            $instituicao = User::where('id', $Id)->first();
+            return response()->json([
+                'nome' => $instituicao->nome,
+                'email' => $instituicao->email,
+                'type_id' => $instituicao->type_id
+            ]);
         }
 
         // Buscar usuários com base no type_id
-        $usuarios = User::where('id', $Id)->get();
+        $usuarios = User::where('id', $Id)->first();
 
-        return response()->json($usuarios);
+        return response()->json([
+            'nome' => $usuarios->nome,
+            'email' => $usuarios->email,
+            'instituicao_id' => $usuarios->instituicao_id,
+            'type_id' => $usuarios->type_id
+        ]);
     }
 
     /*
