@@ -16,6 +16,8 @@ class AlunoController extends Controller
     public function notas(Request $request) {
         $id = $request->input('authenticated_user_id'); 
         $notas = Nota::where('aluno_id', $id)->get();
+        $tarefa_id = Nota::where('aluno_id', $id)->pluck('tarefa_id');
+        $tarefa = Tarefa::where('id', $tarefa_id)->first();
 
         if ($notas->isEmpty()) {
             return response()->json([
@@ -23,8 +25,10 @@ class AlunoController extends Controller
             ]);
         }
 
-        return response()->json($notas);
-
+        return response()->json([
+            "Tarefa" => $tarefa,
+            "Nota" => $notas
+        ]);
     }
     public function tarefas(Request $request) {
         $alunoId = $request->input('authenticated_user_id');

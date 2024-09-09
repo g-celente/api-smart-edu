@@ -55,7 +55,7 @@ class NotaController extends Controller
     public function store(Request $request)
     {
         $credencials = $request->validate([
-            'nota' => 'required|float',
+            'nota' => 'required',
             'aluno_id' => 'required',
             'tarefa_id' => 'required'
         ]);
