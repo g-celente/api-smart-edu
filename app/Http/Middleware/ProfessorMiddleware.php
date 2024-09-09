@@ -5,10 +5,8 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
-use App\Models\User;
-use App\Models\Institution;
 
-class VerifyTypeUser
+class ProfessorMiddleware
 {
     /**
      * Handle an incoming request.
@@ -24,12 +22,12 @@ class VerifyTypeUser
             $user = JWTAuth::parseToken()->authenticate();
             
             // Verifique as informações do usuário na tabela 'users'
-            if ($user->type_id == 1) {
+            if ($user->type_id == 2) {
                 return $next($request);
             }
 
             // Caso contrário, negue o acesso
-            return response()->json(['message' => 'Somente Alunos Podem Acessar.'], 403);
+            return response()->json(['message' => 'Somente professores podem acessar'], 403);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }

@@ -18,35 +18,43 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/home', function() {
-    return ('Olá');
-});
-
 
 //ROTAS PARA REGISTRO E LOGIN INSTITUIÇÃO
 Route::post('/register', 'App\Http\Controllers\LoginRegisterController@registerInstituicao');
 Route::post('/login', 'App\Http\Controllers\LoginRegisterController@login');
-Route::post('/logout', 'App\Http\Controllers\LoginRegisterController@logout')->middleware('jwt.auth');
 
-//ROTAS PARA CRUD DE ALUNOS E PROFESSORES
+Route::middleware(['jwt.auth','retrieve.user'])->group(function (){
+    
+    Route::post('/logout', 'App\Http\Controllers\LoginRegisterController@logout')->middleware('jwt.auth');
 
-//ROTA DE REGISTO DE PROFESSOR E ALUNOS
-Route::post('/registerUser', 'App\Http\Controllers\LoginRegisterController@register')->middleware(['jwt.auth', 'verifyUserType', 'retrieve.user']);
+    //ROTA SOMENTE INSTITUIÇÃO
+    Route::middleware('instituicao')->group( function (){
+        //ROTA DE REGISTO DE PROFESSOR E ALUNOS
+        Route::post('/registerUser', 'App\Http\Controllers\LoginRegisterController@register');
+        //ROTA CRUD DE PROFESSORES E ALUNOS
+        Route::apiResource('/alunos', 'App\Http\Controllers\UserController');
+        Route::apiResource('/professores','App\Http\Controllers\UserController');
+        Route::apiResource('/cursos', 'App\Http\Controllers\CursoController');
+        Route::apiResource('/disciplinas', 'App\Http\Controllers\DisciplinaController');
+    });
+    
+    Route::middleware('professor')->group(function() {
+        //TERMINAR DEPOIS IMPLEMENTAÇÃORoute::get('/alunosProf', 'App\Http\Controllers\ProfessorController@alunos');
+        Route::apiResource('/tarefas', 'App\Http\Controllers\TarefaController');
+        Route::apiResource('/notas', 'App\Http\Controllers\NotaController');
+    });
 
-//ROTA CRUD DE PROFESSORES E ALUNOS
-Route::apiResource('/alunos', 'App\Http\Controllers\UserController')->middleware(['jwt.auth', 'verifyUserType', 'retrieve.user']);
-Route::apiResource('/professores','App\Http\Controllers\UserController')->middleware(['jwt.auth', 'verifyUserType', 'retrieve.user']);
+    Route::middleware('user')->group(function() {
+        Route::get('/myNotas', 'App\Http\Controllers\AlunoController@notas');
+        Route::get('/myTarefas', 'App\Http\Controllers\AlunoController@tarefas');
+        Route::get('/myDisciplinas', 'App\Http\Controllers\AlunoController@disciplinas');
+        Route::get('/myCurso', 'App\Http\Controllers\AlunoController@curso');
+    });
 
-//ROTA CRUD DE CURSOS E DISCIPLINAS
-Route::apiResource('/cursos', 'App\Http\Controllers\CursoController')->middleware(['jwt.auth', 'verifyUserType', 'retrieve.user']);
-Route::apiResource('/disciplinas', 'App\Http\Controllers\DisciplinaController')->middleware(['jwt.auth', 'verifyUserType', 'retrieve.user']);
-
-//ROTA PARA PEGAR O PERFIL DO UUSÁRIO
-Route::get('/perfil', 'App\Http\Controllers\PerfilController@get_perfil')->middleware(['jwt.auth','retrieve.user']);
-
-//ROTA PARA TAREFAS
-Route::apiResource('/tarefas', 'App\Http\Controllers\TarefaController')->middleware(['jwt.auth', 'retrieve.user']);
-
+    //ROTA PARA PEGAR O PERFIL DO USUÁRIO
+    Route::get('/perfil', 'App\Http\Controllers\PerfilController@get_perfil');
+    
+});
 /*
 
 //MÉTODOS PARA INSTITUIÇÃO

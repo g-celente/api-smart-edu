@@ -15,8 +15,8 @@ class TarefaController extends Controller
     public function index(Request $request)
     {
         $Id = $request->input('authenticated_user_id');
-
-        $tarefas = Tarefa::where('professor_id', $Id);
+       
+        $tarefas = Tarefa::where('professor_id', $Id)->get();
 
         return response()->json($tarefas);
     }
@@ -44,7 +44,8 @@ class TarefaController extends Controller
         $credentials = $request->validate([
             'nome' => 'required',
             'descricao' => 'required', 
-            'disciplina_id' => 'required'
+            'disciplina_id' => 'required',
+            'data_entrega' => 'required | date'
             
         ]);
 
@@ -52,7 +53,8 @@ class TarefaController extends Controller
             'nome' => $request->nome,
             'descricao' => $request->descricao,
             'professor_id' => $Id,
-            'disciplina_id' => $request->disciplina_id
+            'disciplina_id' => $request->disciplina_id,
+            'data_entrega' => $request->data_entrega
         ]);
 
         return response()->json([

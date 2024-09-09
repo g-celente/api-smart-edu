@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Nota;
+use App\Models\Tarefa;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class NotaController extends Controller
@@ -12,9 +14,26 @@ class NotaController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $id = $request->input('authenticated_user_id');
+        $type_id = $request->input('authenticated_user_type_id');
+
+        if ($type_id == 1) {
+            $notas = Nota::where('aluno_id', $id);
+
+            if (!$notas) {
+                return response()->json([
+                    'error' => 'nenhuma nota encontrada para este aluno'
+                ]);
+            }
+
+            return response()->json($notas);
+        }
+
+        return response()->json([
+            'error' => 'nenhuma nota cadastrada para este usuário'
+        ]);
     }
 
     /**
@@ -35,7 +54,31 @@ class NotaController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $credencials = $request->validate([
+            'nota' => 'required|float',
+            'aluno_id' => 'required',
+            'tarefa_id' => 'required'
+        ]);
+
+        $aluno = User::where('id', $request->aluno_id)->first();
+        $tarefa = Tarefa::where('id', $request->tarefa_id)->first();
+
+        if (!$aluno || !$tarefa) {
+            return response()->json([
+                'error' => 'aluno ou tarefa não encontrados'
+            ]);
+        }
+
+        $create = Nota::create([
+            'nota' => $request->nota,
+            'aluno_id' => $request->aluno_id,
+            'tarefa_id' => $request->tarefa_id
+        ]);
+
+        return response()->json([
+            'success' => 'nota cadastrada',
+            'nota' => $create,
+        ]);
     }
 
     /**
@@ -46,7 +89,15 @@ class NotaController extends Controller
      */
     public function show(Nota $nota)
     {
-        //
+        $nota = Nota::find($nota);
+
+        if (!$nota) {
+            return response()->json([
+                'error' => 'nenhuma nota encontrada'
+            ]);
+        }
+
+        return response()->json($nota);
     }
 
     /**
@@ -69,7 +120,24 @@ class NotaController extends Controller
      */
     public function update(Request $request, Nota $nota)
     {
-        //
+        $nota = Nota::find($nota);
+
+        if (!$nota) {
+            return response()->json([
+                'error' => 'nenhuma nota encontrada'
+            ]);
+        }
+
+        $nota->update([
+            'nota' => $request->nota,
+            'aluno_id' => $request->aluno_id,
+            'tarefa_id' => $request->tarefa_id
+        ]);
+
+        return response()->json([
+            'success' => 'nota alterada',
+            'nota' => $nota
+        ]);
     }
 
     /**
@@ -80,6 +148,18 @@ class NotaController extends Controller
      */
     public function destroy(Nota $nota)
     {
-        //
+        $nota = Nota::find($nota);
+
+        if (!$nota) {
+            return response()->json([
+                'error' => 'nenhuma nota encontrada'
+            ]);
+        }
+
+        $nota->delete();
+
+        return response()->json([
+            'success' => 'nota deletada com sucesso'
+        ]);
     }
 }

@@ -64,7 +64,9 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'authCred' => \App\Http\Middleware\CredAuth::class,
         'jwt.auth' => \Tymon\JWTAuth\Http\Middleware\Authenticate::class,
-        'verifyUserType' => \App\Http\Middleware\VerifyTypeUser::class,
+        'user' => \App\Http\Middleware\VerifyTypeUser::class,
         'retrieve.user' => \App\Http\Middleware\RetrieveUserByToken::class,
+        'instituicao' => \App\Http\Middleware\VeriFyInstituicao::class,
+        'professor' => \App\Http\Middleware\ProfessorMiddleware::class,
     ];
 }
