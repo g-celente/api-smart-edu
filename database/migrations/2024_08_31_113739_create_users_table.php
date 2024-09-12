@@ -19,6 +19,7 @@ class CreateUsersTable extends Migration
             $table->string('email', 100);
             $table->string('senha', 12);
             $table->integer('type_id');
+            $table->integer('instituicao_id')->nullable();
             $table->timestamps();
             
         });

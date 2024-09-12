@@ -8,6 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class Tarefa extends Model
 {
     use HasFactory;
-
+    protected $table = 'tarefas';
     protected $fillable = ['nome', 'descricao','data_entrega', 'professor_id', 'disciplina_id'];
 }
