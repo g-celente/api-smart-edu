@@ -25,7 +25,7 @@ Route::post('/login', 'App\Http\Controllers\LoginRegisterController@login');
 
 Route::middleware(['jwt.auth','retrieve.user'])->group(function (){
     
-    Route::post('/logout', 'App\Http\Controllers\LoginRegisterController@logout')->middleware('jwt.auth');
+    Route::post('/logout', 'App\Http\Controllers\LoginRegisterController@logout');
 
     //ROTA SOMENTE INSTITUIÇÃO
     Route::middleware('instituicao')->group( function (){
