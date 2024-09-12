@@ -26,6 +26,7 @@ Route::get('/', function () {
 //ROTAS PARA REGISTRO E LOGIN INSTITUIÇÃO
 Route::post('/register', 'App\Http\Controllers\LoginRegisterController@registerInstituicao');
 Route::post('/login', 'App\Http\Controllers\LoginRegisterController@login');
+Route::get('/test', 'App\Http\Controllers\TestController@test');
 
 Route::middleware(['jwt.auth','retrieve.user'])->group(function (){
     
