@@ -18,6 +18,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/ola', function(){
+    return view('ola');
+});
+
 //Route::post('/login', 'App\Http\Controllers\LoginController@login');
 /*
 Route::middleware('authCred')->prefix('/app')->group(function () {
