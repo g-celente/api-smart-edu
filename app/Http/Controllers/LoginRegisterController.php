@@ -100,33 +100,41 @@ class LoginRegisterController extends Controller
         }
     }
 
-    public function login(Request $request) {
+    public function login(Request $request)
+    {
         $credentials = $request->validate([
-            'email'=> 'required',
-            'senha' => 'required',
+            'email' => 'required|email',
+            'senha' => 'required|min:6',
         ]);
 
-        $user = User::where('email', $request->email)->first();
-        
-        if ($user && Hash::check($request->senha, $user->senha)) {
+        try {
+            $user = User::where('email', $request->email)->first();
 
-            $token = JWTAuth::fromUser($user);
+            if ($user && Hash::check($request->senha, $user->senha)) {
+
+                $token = JWTAuth::fromUser($user);
+
+                return response()->json([
+                    'authenticated' => true,
+                    'token' => $token,
+                    'user' => [
+                        "id" => $user->id,
+                        "email" => $user->email,
+                        "type_id" => $user->type_id
+                    ],
+                ], 200);
+            }
 
             return response()->json([
-                'authenticated' => true,
-                'token' => $token,
-                'user' => [
-                    "id" => $user->id,
-                    "email" => $user->email,
-                    "type_id" => $user->type_id
-                ],
-            ],200);
-        }
+                'error' => 'Credenciais inválidas'
+            ], 403);
 
-        return response()->json([
-            'error' => 'Senha ou email inválidos'
-        ], 403);
-    }   
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Ocorreu um erro no processo de login, tente novamente mais tarde.'
+            ], 500);
+        }
+    }  
 
     public function logout() {
         auth('api')->logout();

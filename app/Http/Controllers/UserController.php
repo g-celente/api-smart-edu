@@ -21,28 +21,26 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $typeId = $request->route()->getName() === 'alunos.index' ? 1 : 2;
-        $id = $request->input('authenticated_user_id');
+        $instituicaoId = $request->input('authenticated_user_id');
 
-        if ($typeId == 1) {
-            $usuarios = User::where('instituicao_id', $id)->where('type_id', 1)->get();
+        $usuarios = User::where('instituicao_id', $instituicaoId)
+                        ->where('type_id', $typeId)
+                        ->get();
 
-            return response()->json($usuarios);
+        if ($usuarios->isEmpty()) {
+            return response()->json(['error' => 'Nenhum dado encontrado'], 404);
         }
-        else if ($typeId == 2) {
-            $usuarios = User::where('instituicao_id', $id)->where('type_id', 2)->get();
 
-            return response()->json($usuarios);
-        }
-        else {
-            return response()->json(['error' => 'nenhum dado encontrado']);
-        }
+        return response()->json($usuarios);
     }
 
     // Exibir detalhes de um aluno ou professor
-    public function show(Request $request, $Id)
+    public function show(Request $request, $id)
     {
-        $id = $request->input('authenticated_user_id');
-        $user = User::where('instituicao_id', $id)->where('id', $Id)->get();
+        $instituicaoId = $request->input('authenticated_user_id');
+        $user = User::where('instituicao_id', $instituicaoId)
+                    ->where('id', $id)
+                    ->first();
 
         if (!$user) {
             return response()->json(['error' => 'Usuário não encontrado'], 404);
@@ -59,10 +57,12 @@ class UserController extends Controller
     }
 
     // Atualizar aluno ou professor
-    public function update(Request $request, $Id)
+    public function update(Request $request, $id)
     {
-        $id = $request->input('authenticated_user_id');
-        $user = User::where('instituicao_id', $id)->where('id', $Id)->get();
+        $instituicaoId = $request->input('authenticated_user_id');
+        $user = User::where('instituicao_id', $instituicaoId)
+                    ->where('id', $id)
+                    ->first();
 
         if (!$user) {
             return response()->json(['error' => 'Usuário não encontrado'], 404);
@@ -81,10 +81,12 @@ class UserController extends Controller
     }
 
     // Remover aluno ou professor
-    public function destroy(Request $request, $Id)
+    public function destroy(Request $request, $id)
     {
-        $id = $request->input('authenticated_user_id');
-        $user = User::where('instituicao_id', $id)->where('id', $Id)->get();
+        $instituicaoId = $request->input('authenticated_user_id');
+        $user = User::where('instituicao_id', $instituicaoId)
+                    ->where('id', $id)
+                    ->first();
 
         if (!$user) {
             return response()->json(['error' => 'Usuário não encontrado'], 404);
@@ -99,6 +101,6 @@ class UserController extends Controller
 
         $user->delete();
 
-        return response()->json(['msg' => 'Usuário removido com sucesso!']);
+        return response()->json(['msg' => 'Usuário removido com sucesso!'], 200);
     }
 }
