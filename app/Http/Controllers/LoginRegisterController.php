@@ -10,82 +10,94 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 class LoginRegisterController extends Controller
 {
 
-    public function registerInstituicao(Request $request){
+    public function registerInstituicao(Request $request)
+    {
         $credentials = $request->validate([
-            'nome' => 'required',
-            'email' => 'required',
-            'senha' => 'required',
+            'nome' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'senha' => 'required|min:6',
         ]);
-
-        $email = User::where('email', $request->email)->first();
-        
-        if ($email) {
-            return response()->json([
-                'sign-in' => 'false',
-                'error' => 'instituição já cadastrada'
-            ]);
-        }
-        else {
+    
+        try {
+            $existingEmail = User::where('email', $request->email)->first();
+            
+            if ($existingEmail) {
+                return response()->json([
+                    'sign-in' => false,
+                    'error' => 'Instituição já cadastrada'
+                ], 409); 
+            }
+    
+            
             $instituicao = User::create([
                 'nome' => $request->nome,
                 'email' => $request->email,
                 'senha' => Hash::make($request->senha),
-                'type_id' => 3,
+                'type_id' => 3, 
             ]);
 
             $token = JWTAuth::fromUser($instituicao);
-
+    
             return response()->json([
                 'authenticated' => true,
                 'token' => $token,
                 'user' => [
-                    "id" => $instituicao->id,
-                    "email" => $instituicao->email,
-                    "type_id" => $instituicao->type_id
+                    'id' => $instituicao->id,
+                    'email' => $instituicao->email,
+                    'type_id' => $instituicao->type_id,
                 ],
-            ]);
+            ], 201);
+    
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Ocorreu um erro ao registrar a instituição, tente novamente.'
+            ], 500);
         }
-        
-
     }
 
-    public function register(Request $request) {
+    public function register(Request $request)
+    {
         $credentials = $request->validate([
-            'nome' => 'required',
-            'email' => 'required|email', 
-            'senha' => 'required',
-            'type_id' => 'required',
+            'nome' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'senha' => 'required|min:6',
+            'type_id' => 'required|integer',
         ]);
 
-        $user = User::where('email', $request->email)->first();
-        $instituicao_id = $request->input('authenticated_user_id');
+        try {
+            $existingUser = User::where('email', $request->email)->first();
+            $instituicao_id = $request->input('authenticated_user_id'); 
 
-        if ($user) {
-            return response()->json([
-                'register' => 'false',
-                'error' => 'user já registrado'
+            if ($existingUser) {
+                return response()->json([
+                    'register' => false,
+                    'error' => 'Usuário já registrado'
+                ], 409);
+            }
+
+            $user = User::create([
+                'nome' => $request->nome,
+                'email' => $request->email,
+                'senha' => Hash::make($request->senha),
+                'type_id' => $request->type_id,
+                'instituicao_id' => $instituicao_id, 
             ]);
-        } 
 
-        $user = User::create([
-            'nome' => $request->nome,
-            'email' => $request->email,
-            'senha' => Hash::make($request->senha),
-            'type_id' => $request->type_id,
-            'instituicao_id' =>$instituicao_id,
-        ]);
+            return response()->json([
+                'register' => true,
+                'type_id' => $request->type_id,
+                'user' => [
+                    'id' => $user->id,
+                    'email' => $user->email,
+                    'instituicao_id' => $user->instituicao_id
+                ]
+            ], 201); 
 
-        return response()->json([
-            'authenticate' => 'true',
-            'type_id' => $request->type_id,
-            'user' => [
-                'id' => $user->id,
-                'email' => $user->email,
-                'instituicao_id' => $user->instituicao_id            
-            ]
-        ]);
-        
-            
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Ocorreu um erro ao registrar o usuário, tente novamente.'
+            ], 500);
+        }
     }
 
     public function login(Request $request) {
@@ -93,8 +105,6 @@ class LoginRegisterController extends Controller
             'email'=> 'required',
             'senha' => 'required',
         ]);
-
-        //Hash::check($request->senha, $user->senha)
 
         $user = User::where('email', $request->email)->first();
         
@@ -110,10 +120,12 @@ class LoginRegisterController extends Controller
                     "email" => $user->email,
                     "type_id" => $user->type_id
                 ],
-            ]);
+            ],200);
         }
 
-        return response()->json(['error' => 'Senha ou email inválidos']);
+        return response()->json([
+            'error' => 'Senha ou email inválidos'
+        ], 403);
     }   
 
     public function logout() {
