@@ -19,9 +19,10 @@ class ProfessorMiddleware
     {
         try {
             // Obtenha o usuário autenticado usando JWT
-            $type_id = $request->input('authenticated_user_id');
+            $user = JWTAuth::parseToken()->authenticate();
             
-            if ($type_id == 2) {
+            // Verifique as informações do usuário na tabela 'users'
+            if ($user->type_id == 2) {
                 return $next($request);
             }
 
