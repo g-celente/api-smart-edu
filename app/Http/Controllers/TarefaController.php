@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Disciplina;
 use App\Models\Tarefa;
 use Illuminate\Http\Request;
+use App\Models\Curso;
 
 use function PHPUnit\Framework\isEmpty;
 
@@ -21,7 +22,7 @@ class TarefaController extends Controller
        
         $tarefas = Tarefa::where('professor_id', $Id)->get();
 
-        if (isEmpty($tarefas)) {
+        if ($tarefas->isEmpty()) {
             return response()->json([
                 'error' => 'nenhuma tarefa encontrada'
             ],404);
@@ -49,6 +50,7 @@ class TarefaController extends Controller
     public function store(Request $request)
     {
         $Id = $request->input('authenticated_user_id');
+        $instituicao_id = $request->input('authenticated_instituicao_id');
 
         $credentials = $request->validate([
             'nome' => 'required',
@@ -57,13 +59,17 @@ class TarefaController extends Controller
             'data_entrega' => 'required | date'
             
         ]);
+        
+        $cursos = Curso::where('instituicao_id', $instituicao_id)->get();
+        $cursoIds = $cursos->pluck('id');
+        $disciplinas = Disciplina::whereIn('curso_id', $cursoIds)
+                                ->where('id', $request->disciplina_id)
+                                ->first();
 
-        $disciplina = Disciplina::where('id' , $request->disciplina_id)->first();
-
-        if (!$disciplina) {
+        if (!$disciplinas) {
             return response()->json([
-                'error' => 'nenhuma disciplina encontrada'
-            ],404);
+                'error' => 'Nenhuma disciplina encontrada'
+            ], 404);
         }
 
         $tarefa = Tarefa::create([

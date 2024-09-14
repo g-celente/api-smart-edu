@@ -6,6 +6,7 @@ use App\Models\Nota;
 use App\Models\Tarefa;
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Models\Curso;
 
 class NotaController extends Controller
 {
@@ -54,30 +55,59 @@ class NotaController extends Controller
      */
     public function store(Request $request)
     {
-        $credencials = $request->validate([
+        // ID da instituição autenticada
+        $instituicaoId = $request->input('authenticated_instituicao_id');
+        
+        // Validação dos dados de entrada
+        $credenciais = $request->validate([
             'nota' => 'required|integer',
             'aluno_id' => 'required|integer',
             'tarefa_id' => 'required|integer'
         ]);
 
-        $aluno = User::where('id', $request->aluno_id)->first();
+        // Verificar se o aluno pertence à instituição
+        $aluno = User::where('id', $request->aluno_id)
+                    ->where('instituicao_id', $instituicaoId)
+                    ->first();
+        
+        // Verificar se a tarefa existe e pertence à instituição
         $tarefa = Tarefa::where('id', $request->tarefa_id)->first();
 
-        if (!$aluno || !$tarefa) {
+        // Verificação se o aluno ou a tarefa foram encontrados
+        if (!$aluno) {
             return response()->json([
-                'error' => 'aluno ou tarefa não encontrados'
-            ],404);
+                'error' => 'Aluno não encontrado ou não pertence à instituição'
+            ], 404);
         }
 
-        $create = Nota::create([
+        if (!$tarefa) {
+            return response()->json([
+                'error' => 'Tarefa não encontrada'
+            ], 404);
+        }
+
+        // Verificar se a tarefa está associada a um curso da mesma instituição
+        $curso = Curso::where('id', $tarefa->disciplina->curso_id)
+                    ->where('instituicao_id', $instituicaoId)
+                    ->first();
+
+        if (!$curso) {
+            return response()->json([
+                'error' => 'Tarefa não pertence a um curso da instituição'
+            ], 403);
+        }
+
+        // Criar a nota
+        $nota = Nota::create([
             'nota' => $request->nota,
             'aluno_id' => $request->aluno_id,
             'tarefa_id' => $request->tarefa_id
         ]);
 
+        // Retornar resposta de sucesso
         return response()->json([
-            'success' => 'nota cadastrada',
-            'nota' => $create,
+            'success' => 'Nota cadastrada com sucesso',
+            'nota' => $nota,
         ], 201);
     }
 

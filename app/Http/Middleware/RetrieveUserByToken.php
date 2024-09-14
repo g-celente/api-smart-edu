@@ -25,6 +25,7 @@ class RetrieveUserByToken
             $request->merge([
                 'authenticated_user_id' => $user->id,
                 'authenticated_user_type_id' => $user->type_id,
+                'authenticated_instituicao_id' => $user->instituicao_id
             ]);
 
             return $next($request);
