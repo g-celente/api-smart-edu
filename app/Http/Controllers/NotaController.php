@@ -7,6 +7,7 @@ use App\Models\Tarefa;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Models\Curso;
+use App\Models\Disciplina;
 
 class NotaController extends Controller
 {
@@ -18,23 +19,21 @@ class NotaController extends Controller
     public function index(Request $request)
     {
         $id = $request->input('authenticated_user_id');
-        $type_id = $request->input('authenticated_user_type_id');
+        $tarefas = Tarefa::where('professor_id', $id)->get();
 
-        if ($type_id == 1) {
-            $notas = Nota::where('aluno_id', $id);
-
-            if (!$notas) {
-                return response()->json([
-                    'error' => 'nenhuma nota encontrada para este aluno'
-                ], 404);
-            }
-
-            return response()->json($notas, 200);
+        if ($tarefas->isEmpty()){
+            return response()->json([
+                'error' => 'nenhuma nota encontrada para este professor'
+            ],404);
         }
 
-        return response()->json([
-            'error' => 'nenhuma nota cadastrada para este usuário'
-        ], 404);
+        foreach ($tarefas as $tarefa) {
+            $notas = Nota::where('tarefa_id', $tarefa->id)->get();
+
+            $tarefa->notas = $notas;
+        }
+
+        return response()->json($tarefas, 200);
     }
 
     /**
@@ -70,10 +69,8 @@ class NotaController extends Controller
                     ->where('instituicao_id', $instituicaoId)
                     ->first();
         
-        // Verificar se a tarefa existe e pertence à instituição
         $tarefa = Tarefa::where('id', $request->tarefa_id)->first();
 
-        // Verificação se o aluno ou a tarefa foram encontrados
         if (!$aluno) {
             return response()->json([
                 'error' => 'Aluno não encontrado ou não pertence à instituição'
@@ -86,12 +83,12 @@ class NotaController extends Controller
             ], 404);
         }
 
-        // Verificar se a tarefa está associada a um curso da mesma instituição
-        $curso = Curso::where('id', $tarefa->disciplina->curso_id)
-                    ->where('instituicao_id', $instituicaoId)
-                    ->first();
+        $disciplina = Disciplina::where('id' , $tarefa->disciplina_id)->first();
+        $curso = Curso::where('id', $disciplina->curso_id)
+        ->where('instituicao_id', $instituicaoId)
+        ->first();
 
-        if (!$curso) {
+        if (!$curso || !$disciplina) {
             return response()->json([
                 'error' => 'Tarefa não pertence a um curso da instituição'
             ], 403);
