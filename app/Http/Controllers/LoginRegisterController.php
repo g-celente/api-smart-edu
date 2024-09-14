@@ -13,9 +13,9 @@ class LoginRegisterController extends Controller
     public function registerInstituicao(Request $request)
     {
         $credentials = $request->validate([
-            'nome' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'senha' => 'required|min:6',
+            'nome' => 'required',
+            'email' => 'required',
+            'senha' => 'required',
         ]);
     
         try {
