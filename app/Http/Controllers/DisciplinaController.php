@@ -38,7 +38,7 @@ class DisciplinaController extends Controller
         }
 
         // Retornar os cursos com suas respectivas disciplinas
-        return response()->json($cursos);
+        return response()->json($cursos, 200);
     }
 
     /**
@@ -72,12 +72,12 @@ class DisciplinaController extends Controller
             ->where('id', $request->curso_id)
             ->first();
 
-        $professor = User::find($request->professor_id);
+        $professor = User::where('id', $request->professor_id)->where('type_id' , 2)->first();
 
         if (!$curso || !$professor) {
             return response()->json([
-                'error', 'Professor ou Curso não encontrado!'
-            ]);
+                'error' => 'Professor ou Curso não encontrado!'
+            ],404);
         }
 
         $results = Disciplina::create($request->all());
@@ -123,7 +123,7 @@ class DisciplinaController extends Controller
             ], 404);
         }
 
-        return response()->json($disciplinas);
+        return response()->json($disciplinas, 200);
     }
 
     /**

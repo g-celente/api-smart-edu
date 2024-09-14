@@ -25,15 +25,15 @@ class NotaController extends Controller
             if (!$notas) {
                 return response()->json([
                     'error' => 'nenhuma nota encontrada para este aluno'
-                ]);
+                ], 404);
             }
 
-            return response()->json($notas);
+            return response()->json($notas, 200);
         }
 
         return response()->json([
             'error' => 'nenhuma nota cadastrada para este usuário'
-        ]);
+        ], 404);
     }
 
     /**
@@ -55,9 +55,9 @@ class NotaController extends Controller
     public function store(Request $request)
     {
         $credencials = $request->validate([
-            'nota' => 'required',
-            'aluno_id' => 'required',
-            'tarefa_id' => 'required'
+            'nota' => 'required|integer',
+            'aluno_id' => 'required|integer',
+            'tarefa_id' => 'required|integer'
         ]);
 
         $aluno = User::where('id', $request->aluno_id)->first();
@@ -66,7 +66,7 @@ class NotaController extends Controller
         if (!$aluno || !$tarefa) {
             return response()->json([
                 'error' => 'aluno ou tarefa não encontrados'
-            ]);
+            ],404);
         }
 
         $create = Nota::create([
@@ -78,7 +78,7 @@ class NotaController extends Controller
         return response()->json([
             'success' => 'nota cadastrada',
             'nota' => $create,
-        ]);
+        ], 201);
     }
 
     /**
@@ -94,10 +94,10 @@ class NotaController extends Controller
         if (!$nota) {
             return response()->json([
                 'error' => 'nenhuma nota encontrada'
-            ]);
+            ], 404);
         }
 
-        return response()->json($nota);
+        return response()->json($nota, 200);
     }
 
     /**
@@ -125,7 +125,7 @@ class NotaController extends Controller
         if (!$nota) {
             return response()->json([
                 'error' => 'nenhuma nota encontrada'
-            ]);
+            ], 404);
         }
 
         $nota->update([
@@ -137,7 +137,7 @@ class NotaController extends Controller
         return response()->json([
             'success' => 'nota alterada',
             'nota' => $nota
-        ]);
+        ], 200);
     }
 
     /**
@@ -153,13 +153,13 @@ class NotaController extends Controller
         if (!$nota) {
             return response()->json([
                 'error' => 'nenhuma nota encontrada'
-            ]);
+            ], 404);
         }
 
         $nota->delete();
 
         return response()->json([
             'success' => 'nota deletada com sucesso'
-        ]);
+        ], 200);
     }
 }

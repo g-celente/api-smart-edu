@@ -22,13 +22,13 @@ class AlunoController extends Controller
         if ($notas->isEmpty()) {
             return response()->json([
                 'error' => 'nenhuma nota cadastrada'
-            ]);
+            ], 404);
         }
 
         return response()->json([
             "Tarefa" => $tarefa,
             "Nota" => $notas
-        ]);
+        ], 200);
     }
     public function tarefas(Request $request) {
         $alunoId = $request->input('authenticated_user_id');
@@ -40,7 +40,9 @@ class AlunoController extends Controller
         $tarefas = Tarefa::whereIn('disciplina_id', $disciplinasIds)->get();
     
         if ($tarefas->isEmpty()) {
-            return response()->json(['error' => 'Nenhuma tarefa encontrada'], 404);
+            return response()->json([
+                'error' => 'Nenhuma tarefa encontrada'
+            ], 404);
         }
 
         $tarefasComDetalhes = $tarefas->map(function ($tarefa) use ($disciplinas) {
@@ -56,7 +58,7 @@ class AlunoController extends Controller
             ];
         });
     
-        return response()->json($tarefasComDetalhes);
+        return response()->json($tarefasComDetalhes, 200);
     }
     public function disciplinas(Request $request) {
         $alunoId = $request->input('authenticated_user_id');
@@ -68,7 +70,9 @@ class AlunoController extends Controller
         $disciplinas = Disciplina::whereIn('curso_id', $cursos)->get();
     
         if ($disciplinas->isEmpty()) {
-            return response()->json(['error' => 'Nenhuma disciplina encontrada'], 404);
+            return response()->json([
+                'error' => 'Nenhuma disciplina encontrada'
+            ], 404);
         }
     
         return response()->json($disciplinas);
@@ -83,9 +87,9 @@ class AlunoController extends Controller
         if (!$cursos) {
             return response()->json([
                 'error' => 'nenhum curso para este aluno'
-            ]);
+            ], 404);
         }
 
-        return response()->json($cursos);
+        return response()->json($cursos, 200);
     }
 }

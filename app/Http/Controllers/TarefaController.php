@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Disciplina;
 use App\Models\Tarefa;
 use Illuminate\Http\Request;
+
+use function PHPUnit\Framework\isEmpty;
 
 class TarefaController extends Controller
 {
@@ -18,7 +21,13 @@ class TarefaController extends Controller
        
         $tarefas = Tarefa::where('professor_id', $Id)->get();
 
-        return response()->json($tarefas);
+        if (isEmpty($tarefas)) {
+            return response()->json([
+                'error' => 'nenhuma tarefa encontrada'
+            ],404);
+        }
+
+        return response()->json($tarefas, 200);
     }
 
     /**
@@ -44,10 +53,18 @@ class TarefaController extends Controller
         $credentials = $request->validate([
             'nome' => 'required',
             'descricao' => 'required', 
-            'disciplina_id' => 'required',
+            'disciplina_id' => 'required | integer',
             'data_entrega' => 'required | date'
             
         ]);
+
+        $disciplina = Disciplina::where('id' , $request->disciplina_id)->first();
+
+        if (!$disciplina) {
+            return response()->json([
+                'error' => 'nenhuma disciplina encontrada'
+            ],404);
+        }
 
         $tarefa = Tarefa::create([
             'nome' => $request->nome,
@@ -60,7 +77,7 @@ class TarefaController extends Controller
         return response()->json([
             'sucess' => 'tarefa cadastrada',
             'tarefa' => $tarefa,
-        ]);
+        ], 200);
     }
 
     /**
@@ -75,12 +92,12 @@ class TarefaController extends Controller
         $tarefa = Tarefa::where('professor_id', $id)->where('id', $tarefa)->get();
 
         if ($tarefa) {
-            return response()->json($tarefa);
+            return response()->json($tarefa, 200);
         }
 
         return response()->json([
             'error' => 'tarefa não encontrada'
-        ]);
+        ], 404);
 
     }
 
@@ -112,12 +129,12 @@ class TarefaController extends Controller
             return response()->json([
                 'sucess' => 'tarefa atualizada',
                 'tarefa' => $tarefa
-            ]);
+            ], 201);
         }
 
         return response()->json([
             'error' => 'tarefa não encontrada'
-        ]);
+        ], 404);
     }
 
     /**
@@ -135,12 +152,12 @@ class TarefaController extends Controller
             $tarefa->delete();
             return response()->json([
                 'success' => 'tarefa deletada'
-            ]);
+            ], 200);
         }
 
         return response()->json([
             'error' => 'tarefa não encontrada'
-        ]);
+        ], 404);
         
     }
 }
