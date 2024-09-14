@@ -17,26 +17,21 @@ class AlunoDisciplinaController extends Controller
      */
     public function index(Request $request)
     {
-        // ID da instituição autenticada
         $instituicaoId = $request->input('authenticated_user_id');
 
-        // Verificar se a instituição existe
-        $instituicao = User::where('id', $instituicaoId)->where('type_id', 3)->first(); // type_id 3 seria o da instituição
+        $instituicao = User::where('id', $instituicaoId)->where('type_id', 3)->first(); 
 
         if (!$instituicao) {
             return response()->json(['error' => 'Instituição não encontrada'], 404);
         }
 
-        // Obter os cursos dessa instituição
         $cursos = Curso::where('instituicao_id', $instituicaoId)->get();
 
-        // Obter as disciplinas associadas a esses cursos
         $disciplinasComAlunos = collect();
 
         foreach ($cursos as $curso) {
             $disciplinas = Disciplina::where('curso_id', $curso->id)->get();
 
-            // Para cada disciplina, buscar os alunos relacionados
             foreach ($disciplinas as $disciplina) {
                 $alunos = User::whereIn('id', function ($query) use ($disciplina) {
                     $query->select('aluno_id')
@@ -44,10 +39,8 @@ class AlunoDisciplinaController extends Controller
                         ->where('disciplina_id', $disciplina->id);
                 })->get();
 
-                // Adicionar a lista de alunos à disciplina
                 $disciplina->alunos = $alunos;
 
-                // Adicionar a disciplina com os alunos à coleção de disciplinas
                 $disciplinasComAlunos->push($disciplina);
             }
         }
@@ -152,7 +145,6 @@ class AlunoDisciplinaController extends Controller
             return response()->json(['error' => 'Disciplina não encontrada'], 404);
         }
 
-        // Obter a instituição do aluno
         $instituicaoId = $request->input('authenticated_user_id');
         $curso = Curso::where('id', $disciplina->curso_id)->where('instituicao_id', $instituicaoId)->first();
 
@@ -185,7 +177,6 @@ class AlunoDisciplinaController extends Controller
             return response()->json(['error' => 'Disciplina não encontrada'], 404);
         }
 
-        // Obter a instituição do aluno
         $instituicaoId = $request->input('authenticated_user_id');
         $curso = Curso::where('id', $disciplina->curso_id)->where('instituicao_id', $instituicaoId)->first();
 

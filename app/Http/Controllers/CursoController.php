@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-Use App\Models\User;
+use App\Models\User;
 use App\Models\Curso;
 use Illuminate\Http\Request;
 
@@ -16,25 +16,21 @@ class CursoController extends Controller
     public function index(Request $request)
     {
         $instituicao_id = $request->input('authenticated_user_id');
-        $cursos = Curso::where('instituicao_id', $instituicao_id)->where('id', $instituicao_id)->get();
-
-        if ($cursos) {
-            return response()->json($cursos);
-        }
         
-        return response()->json([
-            'error' => 'Nenhum curso cadastrado nessa instituicao'
-        ]);
-    }
+        // Verificar se a instituição existe
+        $instituicao = User::find($instituicao_id);
+        if (!$instituicao) {
+            return response()->json(['error' => 'Instituição não encontrada'], 404);
+        }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        // Buscar cursos relacionados à instituição
+        $cursos = Curso::where('instituicao_id', $instituicao_id)->get();
+
+        if ($cursos->isEmpty()) {
+            return response()->json(['error' => 'Nenhum curso cadastrado nessa instituição'], 404);
+        }
+
+        return response()->json($cursos, 200);
     }
 
     /**
@@ -45,72 +41,53 @@ class CursoController extends Controller
      */
     public function store(Request $request)
     {
-        $id = $request->input('authenticated_user_id');
+        $instituicao_id = $request->input('authenticated_user_id');
 
-        $credentials = $request->validate([
-            'nome' => 'required',
-            'descricao' => 'required',
-            'periodos' => 'required', 
+        $request->validate([
+            'nome' => 'required|string|max:255',
+            'descricao' => 'required|string',
+            'periodos' => 'required|integer',
         ]);
 
-        $name = Curso::where('nome', $request->nome)
-        ->where('instituicao_id', $id)->first();
-
-        if ($name) {
-            return response()->json([
-                'error' => 'curso já cadastrado nessa instituicao'
-            ]);
+        // Verificar se o curso já existe na instituição
+        if (Curso::where('nome', $request->nome)->where('instituicao_id', $instituicao_id)->exists()) {
+            return response()->json(['error' => 'Curso já cadastrado nessa instituição'], 409);
         }
 
-        $instituicao = User::where('id', $id)->first();
+        $instituicao = User::find($instituicao_id);
 
         if (!$instituicao) {
-            return response()->json([
-                'error' => 'Instituicao não cadastrada'
-            ]);
+            return response()->json(['error' => 'Instituição não cadastrada'], 404);
         }
 
-        $results = Curso::create([
+        $curso = Curso::create([
             'nome' => $request->nome,
             'descricao' => $request->descricao,
             'periodos' => $request->periodos,
-            'instituicao_id' => $id
+            'instituicao_id' => $instituicao_id
         ]);
-        return response()->json([
-            'success' => 'Curso cadastrado',
-            'Curso' => $results
-        ]);
+
+        return response()->json(['success' => 'Curso cadastrado', 'Curso' => $curso], 201);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Curso  $curso
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function show(Request $request, $id)
     {
         $instituicao_id = $request->input('authenticated_user_id');
-        $cursos = Curso::where('instituicao_id', $instituicao_id)->where('id', $id)->get();
+        
+        // Buscar curso da instituição específica
+        $curso = Curso::where('instituicao_id', $instituicao_id)->find($id);
 
-        if (!$cursos) {
-            return response()->json([
-                'error' => 'curso não cadastrado'
-            ]);
+        if (!$curso) {
+            return response()->json(['error' => 'Curso não encontrado'], 404);
         }
 
-        return response()->json($cursos);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Curso  $curso
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Curso $curso)
-    {
-        //
+        return response()->json($curso, 200);
     }
 
     /**
@@ -123,50 +100,42 @@ class CursoController extends Controller
     public function update(Request $request, Curso $curso)
     {
         $instituicao_id = $request->input('authenticated_user_id');
-        $curso = Curso::where('instituicao_id', $instituicao_id)->where('id', $curso)->get();
 
-        if (!$curso) {
-            return response()->json([
-                'error' => 'nenhum curso encontrado'
-            ]);
+        // Verifica se o curso pertence à instituição
+        if ($curso->instituicao_id !== $instituicao_id) {
+            return response()->json(['error' => 'Curso não pertence a esta instituição'], 403);
         }
 
+        // Valida dados
         $validatedData = $request->validate([
             'nome' => 'sometimes|required|string|max:255',
             'descricao' => 'sometimes|required|string',
-            'periodo' => 'sometimes|required|integer',
-            'instituicao_id' => 'sometimes|required|exists:instituicoes,id'
+            'periodos' => 'sometimes|required|integer',
         ]);
 
         $curso->update($validatedData);
 
-        return response()->json([
-            'success' => 'Curso Atualizado Com Sucesso', 
-            'Curso' => $curso
-        ]);
+        return response()->json(['success' => 'Curso atualizado com sucesso', 'Curso' => $curso], 200);
     }
 
     /**
      * Remove the specified resource from storage.
      *
+     * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Curso  $curso
      * @return \Illuminate\Http\Response
      */
     public function destroy(Request $request, Curso $curso)
     {
         $instituicao_id = $request->input('authenticated_user_id');
-        $curso = Curso::where('instituicao_id', $instituicao_id)->where('id', $curso)->get();
 
-        if (!$curso) {
-            return response()->json([
-                'error' => 'nenhum curso encontrado'
-            ]);
+        // Verificar se o curso pertence à instituição
+        if ($curso->instituicao_id !== $instituicao_id) {
+            return response()->json(['error' => 'Curso não pertence a esta instituição'], 403);
         }
 
         $curso->delete();
 
-        return response()->json([
-            'success' => 'curso removido'
-        ]);
+        return response()->json(['success' => 'Curso removido com sucesso'], 200);
     }
 }
