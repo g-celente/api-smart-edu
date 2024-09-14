@@ -74,23 +74,26 @@ class AlunoDisciplinaController extends Controller
         $aluno_id = User::where('id', $request->aluno_id)->first();
         $disciplina_id = Disciplina::where('id', $request->disciplina_id)->first();
 
-        if ($aluno_id->type_id != 1) {
-            return response()->json([
-                'error' => 'somente aluno pode ser cadastrado'
-            ]);
-        }
-
         if (!$aluno_id || !$disciplina_id) {
             return response()->json([
                 'error' => 'aluno ou disciplina não encontrada'
-            ]);
+            ],404);
         }
+
+        if ($aluno_id->type_id != 1) {
+            return response()->json([
+                'error' => 'somente aluno pode ser cadastrado'
+            ],403);
+        }
+
 
         $instituicaoId = $request->input('authenticated_user_id');
         $curso = Curso::where('id', $disciplina_id->curso_id)->where('instituicao_id', $instituicaoId)->first();
 
         if (!$curso) {
-            return response()->json(['error' => 'Disciplina não pertence ao curso da instituição autenticada'], 403);
+            return response()->json([
+                'error' => 'Disciplina não pertence ao curso da instituição autenticada'
+            ], 403);
         }
 
         $relacionamento = AlunoDisciplina::create($request->all());
@@ -98,7 +101,7 @@ class AlunoDisciplinaController extends Controller
         return response()->json([
             'success' => 'Relacionamento adicionado',
             'relacionamento' => $relacionamento
-        ]);
+        ],200);
 
     }
 
