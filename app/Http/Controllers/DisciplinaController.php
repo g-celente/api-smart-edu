@@ -24,25 +24,21 @@ class DisciplinaController extends Controller
         // Verificar se há cursos
         if ($cursos->isEmpty()) {
             return response()->json([
-                'error' => 'nenhum curso encontrado'
+                'error' => 'Nenhum curso encontrado'
             ], 404);
         }
 
-        // Obter os IDs dos cursos
-        $cursoIds = $cursos->pluck('id');
+        // Para cada curso, incluir as disciplinas associadas
+        foreach ($cursos as $curso) {
+            // Obter as disciplinas associadas a esse curso
+            $disciplinas = Disciplina::where('curso_id', $curso->id)->get();
 
-        // Buscar as disciplinas associadas aos cursos
-        $disciplinas = Disciplina::whereIn('curso_id', $cursoIds)->get();
-
-        // Verificar se há disciplinas associadas aos cursos
-        if ($disciplinas->isEmpty()) {
-            return response()->json([
-                'error' => 'nenhuma disciplina encontrada'
-            ], 404);
+            // Adicionar as disciplinas ao curso
+            $curso->disciplinas = $disciplinas;
         }
 
-        // Retornar as disciplinas encontradas
-        return response()->json($disciplinas);
+        // Retornar os cursos com suas respectivas disciplinas
+        return response()->json($cursos);
     }
 
     /**
