@@ -92,8 +92,9 @@ class UserController extends Controller
             return response()->json(['error' => 'Usuário não encontrado'], 404);
         }
 
-        $typeId = $request->route()->getName() === 'alunos.delete' ? 1 : 2;
-        $errorResponse = $this->checkUserType($user, $typeId);
+        $typeId = $request->route()->getName() === 'alunos.destroy' ? 1 : 2;
+
+       $errorResponse = $this->checkUserType($user, $typeId);
 
         if ($errorResponse) {
             return $errorResponse;
@@ -102,5 +103,6 @@ class UserController extends Controller
         $user->delete();
 
         return response()->json(['msg' => 'Usuário removido com sucesso!'], 200);
+        
     }
 }
