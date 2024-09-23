@@ -9,7 +9,7 @@ use App\Models\Disciplina;
 use App\Models\Curso;
 use App\Models\AlunoDisciplina;
 use App\Models\User;
-
+use Symfony\Component\CssSelector\Node\FunctionNode;
 
 class AlunoController extends Controller
 {
@@ -91,5 +91,18 @@ class AlunoController extends Controller
         }
 
         return response()->json($cursos, 200);
+    }
+
+    public function getTarefasById($id_disciplina) {
+
+        $tarefas = Tarefa::where('disciplina_id', $id_disciplina)->get();
+        
+        if ($tarefas->isEmpty()) {
+            return response()->json([
+                'error' => 'Nenhuma tarefa encontrada'
+            ],404);
+        }
+        
+        return response()->json($tarefas);
     }
 }

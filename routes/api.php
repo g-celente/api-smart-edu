@@ -55,6 +55,7 @@ Route::middleware(['jwt.auth','retrieve.user'])->group(function (){
         Route::get('/myTarefas', 'App\Http\Controllers\AlunoController@tarefas');
         Route::get('/myDisciplinas', 'App\Http\Controllers\AlunoController@disciplinas');
         Route::get('/myCurso', 'App\Http\Controllers\AlunoController@curso');
+        Route::get('/tarefasDisciplinas/{id_disciplina}' ,'App\Http\Controllers\AlunoController@getTarefasById');
     });
 
     //ROTA PARA PEGAR O PERFIL DO USUÁRIO
