@@ -50,15 +50,14 @@ class PerfilController extends Controller
         $user->update([
             'nome' => $request->nome,
             'email' => $request->email,
-            'type_id' => $request->type_id,
-            'instituicao_id' => $request->instituicao_id
+            'senha' => Hash::make($request->email)
         ]);
         return response()->json([
             'success' => 'usuário alterado',
             'user' => $user
         ], 200);
     }
-
+    /*
     public function update_password(Request $request) {
         $user_id = $request->input('authenticated_user_id');
 
@@ -88,6 +87,7 @@ class PerfilController extends Controller
         }
         
     }
+    */
 
 
 }

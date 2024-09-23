@@ -141,4 +141,32 @@ class LoginRegisterController extends Controller
 
         return response()->json(['success' => 'logout efetuado']);
     }
+
+    public function update_password(Request $request) {
+
+        $user = User::where('email' , $request->email)->first();
+
+        if (!$user) {
+            return response()->json([
+                'error' => 'email não encontrado'
+            ], 404);
+        }
+
+        try {
+            $user->update([
+                'senha' => Hash::make($request->senha),
+            ]);
+
+            return response()->json([
+                'success' => 'senha alterada com sucesso'
+            ], 200);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'problema ao tentar alterar senha',
+                'erro' => $e
+            ], 500);
+        }
+    }
 }
+

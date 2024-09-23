@@ -26,6 +26,7 @@ Route::get('/', function () {
 //ROTAS PARA REGISTRO E LOGIN INSTITUIÇÃO
 Route::post('/register', 'App\Http\Controllers\LoginRegisterController@registerInstituicao');
 Route::post('/login', 'App\Http\Controllers\LoginRegisterController@login');
+Route::put('/forgotPassword', 'App\Http\Controllers\LoginRegisterController@update_password');
 Route::get('/test', 'App\Http\Controllers\TestController@test');
 
 Route::middleware(['jwt.auth','retrieve.user'])->group(function (){
@@ -61,7 +62,6 @@ Route::middleware(['jwt.auth','retrieve.user'])->group(function (){
     //ROTA PARA PEGAR O PERFIL DO USUÁRIO
     Route::get('/perfil', 'App\Http\Controllers\PerfilController@get_perfil');
     Route::put('/updatePerfil', 'App\Http\Controllers\PerfilController@update_perfil');
-    Route::put('/updateSenha', 'App\Http\Controllers\PerfilController@update_password');
     
 });
 /*
