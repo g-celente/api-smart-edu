@@ -50,14 +50,13 @@ class PerfilController extends Controller
         $user->update([
             'nome' => $request->nome,
             'email' => $request->email,
-            'senha' => Hash::make($request->email)
         ]);
         return response()->json([
             'success' => 'usuário alterado',
             'user' => $user
         ], 200);
     }
-    /*
+
     public function update_password(Request $request) {
         $user_id = $request->input('authenticated_user_id');
 
@@ -68,26 +67,31 @@ class PerfilController extends Controller
                 'error' => 'usuário não encontrado no banco'
             ], 404);
         }
-        
-        try{
-            $user->update([
-                'senha' => Hash::make($request->senha)
-            ]);
 
-            return response()->json([
-                'success' => 'senha alterada',
-                'user' => $user
-            ], 200);
+        if (Hash::check($request->senha_atual, $user->senha)) {
+            try{
+                $user->update([
+                    'senha' => Hash::make($request->nova_senha)
+                ]);
+    
+                return response()->json([
+                    'success' => 'senha alterada',
+                    'user' => $user
+                ], 200);
+            }
+            catch (\Exception $e) {
+                return response()->json([
+                    'error' => 'erro ao tentar alterar a senha',
+                    'problema' => $e
+                ], 404);
+            }
         }
-        catch (\Exception $e) {
-            return response()->json([
-                'error' => 'erro ao tentar alterar a senha',
-                'problema' => $e
-            ]);
-        }
+
+        return response()->json([
+            'error' => 'senha atual não é compatível',
+        ], 404);
         
     }
-    */
 
 
 }

@@ -62,6 +62,7 @@ Route::middleware(['jwt.auth','retrieve.user'])->group(function (){
     //ROTA PARA PEGAR O PERFIL DO USUÁRIO
     Route::get('/perfil', 'App\Http\Controllers\PerfilController@get_perfil');
     Route::put('/updatePerfil', 'App\Http\Controllers\PerfilController@update_perfil');
+    Route::put('/updateSenha', 'App\Http\Controllers\PerfilController@update_password');
     
 });
 /*
