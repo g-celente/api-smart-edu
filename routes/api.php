@@ -42,7 +42,7 @@ Route::middleware(['jwt.auth','retrieve.user'])->group(function (){
         Route::apiResource('/professores','App\Http\Controllers\UserController');
         Route::apiResource('/cursos', 'App\Http\Controllers\CursoController');
         Route::apiResource('/disciplinas', 'App\Http\Controllers\DisciplinaController');
-        Route::apiResource('/alunosDisciplinas', 'App\Http\Controllers\AlunoDisciplinaController');
+        Route::apiResource('/alunosCursos', 'App\Http\Controllers\AlunoCursoController');
     });
     
     Route::middleware('professor')->group(function() {
@@ -52,7 +52,7 @@ Route::middleware(['jwt.auth','retrieve.user'])->group(function (){
     });
 
     Route::middleware('user')->group(function() {
-        Route::get('/myNotas', 'App\Http\Controllers\AlunoController@notas');
+        Route::get('/myNotas/{tarefa_id}', 'App\Http\Controllers\AlunoController@notas');
         Route::get('/myTarefas', 'App\Http\Controllers\AlunoController@tarefas');
         Route::get('/myDisciplinas', 'App\Http\Controllers\AlunoController@disciplinas');
         Route::get('/myCurso', 'App\Http\Controllers\AlunoController@curso');
@@ -63,6 +63,7 @@ Route::middleware(['jwt.auth','retrieve.user'])->group(function (){
     Route::get('/perfil', 'App\Http\Controllers\PerfilController@get_perfil');
     Route::put('/updatePerfil', 'App\Http\Controllers\PerfilController@update_perfil');
     Route::put('/updateSenha', 'App\Http\Controllers\PerfilController@update_password');
+    Route::put('/updateImg', 'App\Http\Controllers\PerfilController@update_img');
     
 });
 /*

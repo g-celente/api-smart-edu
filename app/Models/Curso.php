@@ -13,7 +13,8 @@ class Curso extends Model
         'nome',
         'descricao',
         'periodos',
-        'instituicao_id'
+        'instituicao_id',
+        'aluno_id'
     ];
 }
 

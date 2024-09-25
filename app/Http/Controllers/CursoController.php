@@ -47,6 +47,7 @@ class CursoController extends Controller
             'nome' => 'required|string|max:255',
             'descricao' => 'required|string',
             'periodos' => 'required|integer',
+            'curso_img' => 'url'
         ]);
 
         // Verificar se o curso já existe na instituição
@@ -64,6 +65,7 @@ class CursoController extends Controller
             'nome' => $request->nome,
             'descricao' => $request->descricao,
             'periodos' => $request->periodos,
+            'curso_img' => $request->curso_img,
             'instituicao_id' => $instituicao_id
         ]);
 

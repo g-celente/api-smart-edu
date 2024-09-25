@@ -23,9 +23,7 @@ class TarefaController extends Controller
         $tarefas = Tarefa::where('professor_id', $Id)->get();
 
         if ($tarefas->isEmpty()) {
-            return response()->json([
-                'error' => 'nenhuma tarefa encontrada'
-            ],404);
+            return response()->json([]);
         }
 
         return response()->json($tarefas, 200);

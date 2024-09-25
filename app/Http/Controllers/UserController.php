@@ -28,7 +28,7 @@ class UserController extends Controller
                         ->get();
 
         if ($usuarios->isEmpty()) {
-            return response()->json(['error' => 'Nenhum dado encontrado'], 404);
+            return response()->json([]);
         }
 
         return response()->json($usuarios);

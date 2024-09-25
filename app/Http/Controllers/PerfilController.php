@@ -29,6 +29,7 @@ class PerfilController extends Controller
         $usuarios = User::where('id', $Id)->first();
 
         return response()->json([
+            'id' => $usuarios->id,
             'nome' => $usuarios->nome,
             'email' => $usuarios->email,
             'instituicao_id' => $usuarios->instituicao_id,
@@ -49,7 +50,7 @@ class PerfilController extends Controller
 
         $user->update([
             'nome' => $request->nome,
-            'email' => $request->email,
+            'email' => $request->email
         ]);
         return response()->json([
             'success' => 'usuário alterado',
@@ -91,6 +92,26 @@ class PerfilController extends Controller
             'error' => 'senha atual não é compatível',
         ], 404);
         
+    }
+
+    public function update_img(Request $request) {
+        $user_id = $request->input('authenticated_user_id');
+
+        $user = User::where('id', $user_id)->first();
+
+        if (!$user) {
+            return response()->json([
+                'error' => 'usuário não encontrado'
+            ], 404);
+        }
+
+        $img = $user->update([
+            'user_img' => $request->user_img
+        ]);
+
+        return response()->json([
+            'success' => 'imagem adicionada com sucesso'
+        ], 200);
     }
 
 

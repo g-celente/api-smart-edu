@@ -22,9 +22,7 @@ class NotaController extends Controller
         $tarefas = Tarefa::where('professor_id', $id)->get();
 
         if ($tarefas->isEmpty()){
-            return response()->json([
-                'error' => 'nenhuma nota encontrada para este professor'
-            ],404);
+            return response()->json([]);
         }
 
         foreach ($tarefas as $tarefa) {
@@ -71,7 +69,7 @@ class NotaController extends Controller
         
         $tarefa = Tarefa::where('id', $request->tarefa_id)->first();
 
-        if (!$aluno) {
+        if (!$aluno || $aluno->type_id == 2 || $aluno->type_id == 3) {
             return response()->json([
                 'error' => 'Aluno não encontrado ou não pertence à instituição'
             ], 404);
@@ -94,6 +92,13 @@ class NotaController extends Controller
             ], 403);
         }
 
+        $notas = Nota::where('aluno_id', $request->aluno_id)->where('tarefa_id', $request->tarefa_id)->first();
+
+        if($notas) {
+            return response()->json([
+                'error' => 'nota já cadastrada'
+            ], 404);
+        }
         // Criar a nota
         $nota = Nota::create([
             'nota' => $request->nota,
@@ -119,9 +124,7 @@ class NotaController extends Controller
         $nota = Nota::find($nota);
 
         if (!$nota) {
-            return response()->json([
-                'error' => 'nenhuma nota encontrada'
-            ], 404);
+            return response()->json([]);
         }
 
         return response()->json($nota, 200);
@@ -151,7 +154,7 @@ class NotaController extends Controller
 
         if (!$nota) {
             return response()->json([
-                'error' => 'nenhuma nota encontrada'
+                'error' => 'nota não encontrada'
             ], 404);
         }
 
@@ -179,7 +182,7 @@ class NotaController extends Controller
 
         if (!$nota) {
             return response()->json([
-                'error' => 'nenhuma nota encontrada'
+                'error' => 'nota não encontrada'
             ], 404);
         }
 

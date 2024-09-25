@@ -7,87 +7,58 @@ use App\Models\Nota;
 use App\Models\Tarefa;
 use App\Models\Disciplina;
 use App\Models\Curso;
-use App\Models\AlunoDisciplina;
+use App\Models\AlunoCurso;
 use App\Models\User;
 use Symfony\Component\CssSelector\Node\FunctionNode;
 
 class AlunoController extends Controller
 {
-    public function notas(Request $request) {
-        $id = $request->input('authenticated_user_id'); 
-        $notas = Nota::where('aluno_id', $id)->get();
-        $tarefa_id = Nota::where('aluno_id', $id)->pluck('tarefa_id');
-        $tarefa = Tarefa::where('id', $tarefa_id)->first();
+    public function notas(Request $request, $Id) {
+        $aluno_id = $request->input('authenticated_user_id'); 
+
+        $notas = Nota::where('tarefa_id', $Id)->where('aluno_id', $aluno_id)->get();
 
         if ($notas->isEmpty()) {
-            return response()->json([
-                'error' => 'nenhuma nota cadastrada'
-            ], 404);
+            return response()->json([]);
         }
 
-        return response()->json([
-            "Tarefa" => $tarefa,
-            "Nota" => $notas
-        ], 200);
+        return response()->json([$notas]);
     }
     public function tarefas(Request $request) {
         $alunoId = $request->input('authenticated_user_id');
 
-        $disciplinasIds = AlunoDisciplina::where('aluno_id', $alunoId)->pluck('disciplina_id');
+        $curso_id = AlunoCurso::where('aluno_id', $alunoId)->pluck('curso_id');
+        $disciplina_id = Disciplina::whereIn('curso_id', $curso_id)->pluck('id');
     
-        $disciplinas = Disciplina::whereIn('id', $disciplinasIds)->get();
+        $tarefas = Tarefa::whereIn('disciplina_id', $disciplina_id)->get();
 
-        $tarefas = Tarefa::whereIn('disciplina_id', $disciplinasIds)->get();
-    
-        if ($tarefas->isEmpty()) {
-            return response()->json([
-                'error' => 'Nenhuma tarefa encontrada'
-            ], 404);
+        if($tarefas->isEmpty()) {
+            return response()->json([]);
         }
 
-        $tarefasComDetalhes = $tarefas->map(function ($tarefa) use ($disciplinas) {
-            $disciplina = $disciplinas->firstWhere('id', $tarefa->disciplina_id);
-            return [
-                'Nome Tarefa' => $tarefa->nome,
-                'Descrição' => $tarefa->descricao,
-                'Professor' => $tarefa->professor_id,
-                'Data de Entrega' => $tarefa->data_entrega,
-                'Disciplina' => [
-                    'Nome' => $disciplina ? $disciplina->nome : 'Disciplina não encontrada',
-                ]
-            ];
-        });
-    
-        return response()->json($tarefasComDetalhes, 200);
+        return response()->json([$tarefas]);
+
     }
     public function disciplinas(Request $request) {
         $alunoId = $request->input('authenticated_user_id');
 
-        $instituicaoId = User::find($alunoId)->instituicao_id;
-    
-        $cursos = Curso::where('instituicao_id', $instituicaoId)->pluck('id');
-    
-        $disciplinas = Disciplina::whereIn('curso_id', $cursos)->get();
-    
-        if ($disciplinas->isEmpty()) {
-            return response()->json([
-                'error' => 'Nenhuma disciplina encontrada'
-            ], 404);
+        $cursos = AlunoCurso::where('aluno_id', $alunoId)->pluck('curso_id');
+
+        $disciplinas = Disciplina::where('curso_id', $cursos)->get();
+
+        if($disciplinas->isEmpty()) {
+            return response()->json([]);
         }
-    
-        return response()->json($disciplinas);
+
+        return response()->json([$disciplinas]);
     }   
     public function curso(Request $request) {
         $alunoId = $request->input('authenticated_user_id');
 
-        $instituicaoId = User::find($alunoId)->instituicao_id;
+        $cursos = AlunoCurso::where('aluno_id', $alunoId)->get();
 
-        $cursos = Curso::where('instituicao_id', $instituicaoId)->first();
-
-        if (!$cursos) {
-            return response()->json([
-                'error' => 'nenhum curso para este aluno'
-            ], 404);
+        if ($cursos->isEmpty()) {
+            return response()->json([]);
         }
 
         return response()->json($cursos, 200);

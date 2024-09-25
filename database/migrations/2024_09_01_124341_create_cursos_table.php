@@ -18,6 +18,7 @@ class CreateCursosTable extends Migration
             $table->string('nome', 30);
             $table->text('descricao');
             $table->integer('periodos');
+            $table->text('curso_img')->nullable();
             $table->unsignedBigInteger('instituicao_id');
             $table->timestamps();
 
