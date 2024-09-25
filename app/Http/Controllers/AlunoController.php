@@ -76,4 +76,5 @@ class AlunoController extends Controller
         
         return response()->json($tarefas);
     }
+
 }
