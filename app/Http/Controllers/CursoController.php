@@ -121,6 +121,7 @@ class CursoController extends Controller
             'nome' => 'sometimes|required|string|max:255',
             'descricao' => 'sometimes|required|string',
             'periodos' => 'sometimes|required|integer',
+            'curso_img' => 'sometimes'
         ]);
 
         $curso->update($validatedData);
