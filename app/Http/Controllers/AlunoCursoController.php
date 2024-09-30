@@ -85,24 +85,30 @@ class AlunoCursoController extends Controller
             return $aluno['aluno_id'];
         }, $request->alunos_id);
 
-        // Verificar se todos os alunos existem e pertencem à instituição
-        $alunos = User::where('instituicao_id', $instituicaoId)
-                    ->whereIn('id', $alunosIds)
-                    ->where('type_id', 1)  // Tipo 1 para alunos
-                    ->get();
+        try {
+            foreach ($alunosIds as $aluno) {
 
-        if ($alunos->count() !== count($alunosIds)) {
-            return response()->json(['error' => 'Um ou mais alunos não pertencem à instituição ou não são do tipo aluno'], 404);
-        }
-
-        // Cadastrar cada aluno no curso
-        foreach ($alunos as $aluno) {
-            AlunoCurso::create([
-                'aluno_id' => $aluno->id,  // Utiliza o ID de cada aluno encontrado
-                'curso_id' => $request->curso_id
+                $validate = User::where('instituicao_id', $instituicaoId)->where('id', $aluno)->where('type_id', 1)->first();
+                $validate_create = AlunoCurso::where('aluno_id', $aluno)->where('curso_id', $request->curso_id)->first();
+    
+                if (!$validate || $validate_create) {
+                    return response()->json([
+                        'error' => 'aluno não encontrado ou já registrado'
+                    ], 404);
+                }
+    
+                AlunoCurso::create([
+                    'aluno_id' => $aluno->id,  // Utiliza o ID de cada aluno encontrado
+                    'curso_id' => $request->curso_id
+                ]);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'não foi possível cadastrar os usuários',
+                'erro' => $e
             ]);
         }
-
+        
         return response()->json([
             'success' => 'Relações de alunos cadastradas com sucesso no curso.'
         ]);
