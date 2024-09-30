@@ -47,7 +47,7 @@ class CursoController extends Controller
             'nome' => 'required|string|max:255',
             'descricao' => 'required|string',
             'periodos' => 'required|integer',
-            'curso_img' => 'url'
+            'curso_img' => 'required'
         ]);
 
         // Verificar se o curso já existe na instituição
@@ -61,15 +61,23 @@ class CursoController extends Controller
             return response()->json(['error' => 'Instituição não cadastrada'], 404);
         }
 
-        $curso = Curso::create([
-            'nome' => $request->nome,
-            'descricao' => $request->descricao,
-            'periodos' => $request->periodos,
-            'curso_img' => $request->curso_img,
-            'instituicao_id' => $instituicao_id
-        ]);
+        try {
+            $curso = Curso::create([
+                'nome' => $request->nome,
+                'descricao' => $request->descricao,
+                'periodos' => $request->periodos,
+                'curso_img' => $request->curso_img,
+                'instituicao_id' => $instituicao_id
+            ]);
 
-        return response()->json(['success' => 'Curso cadastrado', 'Curso' => $curso], 201);
+            return response()->json([
+                'success' => 'curso criado com sucesso',
+                'curso' => $curso
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 
     /**

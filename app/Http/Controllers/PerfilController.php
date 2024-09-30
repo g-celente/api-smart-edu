@@ -21,7 +21,8 @@ class PerfilController extends Controller
             return response()->json([
                 'nome' => $instituicao->nome,
                 'email' => $instituicao->email,
-                'type_id' => $instituicao->type_id
+                'type_id' => $instituicao->type_id,
+                'user_img' => $instituicao->user_img
             ]);
         }
 
