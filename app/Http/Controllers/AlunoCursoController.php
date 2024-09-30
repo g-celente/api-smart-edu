@@ -65,34 +65,49 @@ class AlunoCursoController extends Controller
      */
     public function store(Request $request)
     {
-
         $instituicaoId = $request->input('authenticated_user_id');
 
-        $credentials = $request->validate([
-            'aluno_id' => 'required',
-            'curso_id' => 'required'
+        // Validação dos dados
+        $request->validate([ 
+            'curso_id' => 'required|integer',
+            'alunos_id' => 'required|array'
         ]);
 
+        // Verificar se o curso pertence à instituição
         $curso = Curso::where('instituicao_id', $instituicaoId)->where('id', $request->curso_id)->first();
-        $aluno = User::where('instituicao_id', $instituicaoId)->where('id', $request->aluno_id)->where('type_id', 1)->first();
 
-        if (!$curso || !$aluno) {
-            return response()->json([
-                'error' => 'aluno ou curso não encontrado na instituicao'
-            ],404);
+        if (!$curso) {
+            return response()->json(['error' => 'Curso não encontrado ou não pertence à instituição'], 404);
         }
 
-        $validate = AlunoCurso::create([
-            'aluno_id' => $request->aluno_id,
-            'curso_id' => $request->curso_id
-        ]);
+        // Extrair os IDs dos alunos do array de objetos
+        $alunosIds = array_map(function($aluno) {
+            return $aluno['aluno_id'];
+        }, $request->alunos_id);
+
+        // Verificar se todos os alunos existem e pertencem à instituição
+        $alunos = User::where('instituicao_id', $instituicaoId)
+                    ->whereIn('id', $alunosIds)
+                    ->where('type_id', 1)  // Tipo 1 para alunos
+                    ->get();
+
+        if ($alunos->count() !== count($alunosIds)) {
+            return response()->json(['error' => 'Um ou mais alunos não pertencem à instituição ou não são do tipo aluno'], 404);
+        }
+
+        // Cadastrar cada aluno no curso
+        foreach ($alunos as $aluno) {
+            AlunoCurso::create([
+                'aluno_id' => $aluno->id,  // Utiliza o ID de cada aluno encontrado
+                'curso_id' => $request->curso_id
+            ]);
+        }
 
         return response()->json([
-            'success' => 'relação cadastrada',
-            'relacao' => $validate
+            'success' => 'Relações de alunos cadastradas com sucesso no curso.'
         ]);
-    
     }
+
 
     /**
      * Display the specified resource.
