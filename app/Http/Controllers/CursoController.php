@@ -47,7 +47,7 @@ class CursoController extends Controller
             'nome' => 'required|string|max:255',
             'descricao' => 'required|string',
             'periodos' => 'required|integer',
-            'curso_img' => 'required'
+            'curso_img' => ''
         ]);
 
         // Verificar se o curso já existe na instituição
@@ -74,7 +74,7 @@ class CursoController extends Controller
                 'success' => 'curso criado com sucesso',
                 'curso' => $curso
             ]);
-            
+
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }

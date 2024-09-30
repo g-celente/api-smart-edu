@@ -58,6 +58,7 @@ class DisciplinaController extends Controller
         $credentials = $request->validate([
             'nome' => 'required', 
             'carga_horaria' => 'required',
+            'disciplina_img' => '',
             'curso_id' => 'required',
             'professor_id' => 'required'
         ]);
