@@ -51,7 +51,8 @@ class PerfilController extends Controller
 
         $user->update([
             'nome' => $request->nome,
-            'email' => $request->email
+            'email' => $request->email,
+            'user_img' => $request->user_img
         ]);
         return response()->json([
             'success' => 'usuário alterado',
