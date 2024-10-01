@@ -34,6 +34,7 @@ class PerfilController extends Controller
             'nome' => $usuarios->nome,
             'email' => $usuarios->email,
             'instituicao_id' => $usuarios->instituicao_id,
+            'user_img' => $usuarios->user_img,
             'type_id' => $usuarios->type_id
         ]);
     }
@@ -95,26 +96,4 @@ class PerfilController extends Controller
         ], 404);
         
     }
-
-    public function update_img(Request $request) {
-        $user_id = $request->input('authenticated_user_id');
-
-        $user = User::where('id', $user_id)->first();
-
-        if (!$user) {
-            return response()->json([
-                'error' => 'usuário não encontrado'
-            ], 404);
-        }
-
-        $img = $user->update([
-            'user_img' => $request->user_img
-        ]);
-
-        return response()->json([
-            'success' => 'imagem adicionada com sucesso'
-        ], 200);
-    }
-
-
 }

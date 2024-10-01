@@ -63,7 +63,6 @@ Route::middleware(['jwt.auth','retrieve.user'])->group(function (){
     Route::get('/perfil', 'App\Http\Controllers\PerfilController@get_perfil');
     Route::put('/updatePerfil', 'App\Http\Controllers\PerfilController@update_perfil');
     Route::put('/updateSenha', 'App\Http\Controllers\PerfilController@update_password');
-    Route::put('/updateImg', 'App\Http\Controllers\PerfilController@update_img');
     
 });
 /*
