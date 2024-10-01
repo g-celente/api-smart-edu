@@ -16,6 +16,7 @@ class LoginRegisterController extends Controller
             'nome' => 'required',
             'email' => 'required',
             'senha' => 'required',
+            'user_img' => ''
         ]);
     
         try {
