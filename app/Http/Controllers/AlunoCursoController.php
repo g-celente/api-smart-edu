@@ -98,15 +98,15 @@ class AlunoCursoController extends Controller
                 }
     
                 AlunoCurso::create([
-                    'aluno_id' => $aluno->id,  // Utiliza o ID de cada aluno encontrado
+                    'aluno_id' => $aluno,  // Utiliza o ID de cada aluno encontrado
                     'curso_id' => $request->curso_id
                 ]);
             }
         } catch (\Exception $e) {
             return response()->json([
                 'error' => 'não foi possível cadastrar os usuários',
-                'erro' => $e
-            ]);
+                'erro' => $e->getMessage()
+            ], 500);
         }
         
         return response()->json([
