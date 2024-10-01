@@ -33,7 +33,8 @@ class LoginRegisterController extends Controller
                 'nome' => $request->nome,
                 'email' => $request->email,
                 'senha' => Hash::make($request->senha),
-                'type_id' => 3, 
+                'user_img' => $request->user_img,
+                'type_id' => 3
             ]);
 
             $token = JWTAuth::fromUser($instituicao);

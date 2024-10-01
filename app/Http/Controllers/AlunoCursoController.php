@@ -192,17 +192,15 @@ class AlunoCursoController extends Controller
      */
     public function destroy(AlunoCurso $alunoCurso)
     {
-        // Se o relacionamento não for encontrado, retornar erro 404
+    
         if (!$alunoCurso) {
             return response()->json([
                 'error' => 'Relacionamento não encontrado'
             ], 404);
         }
 
-        // Deletar o relacionamento
         $alunoCurso->delete();
 
-        // Retornar resposta de sucesso
         return response()->json([
             'success' => 'Relacionamento deletado com sucesso',
         ], 200);
