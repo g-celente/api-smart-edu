@@ -49,12 +49,13 @@ Route::middleware(['jwt.auth','retrieve.user'])->group(function (){
         //TERMINAR DEPOIS IMPLEMENTAÇÃORoute::get('/alunosProf', 'App\Http\Controllers\ProfessorController@alunos');
         Route::apiResource('/tarefas', 'App\Http\Controllers\TarefaController');
         Route::apiResource('/notas', 'App\Http\Controllers\NotaController');
+        Route::get('/myDisciplinas', 'App\Http\Controllers\ProfessorController@disciplinas');
+
     });
 
     Route::middleware('user')->group(function() {
         Route::get('/myNotas/{tarefa_id}', 'App\Http\Controllers\AlunoController@notas');
         Route::get('/myTarefas', 'App\Http\Controllers\AlunoController@tarefas');
-        Route::get('/myDisciplinas', 'App\Http\Controllers\AlunoController@disciplinas');
         Route::get('/myCurso', 'App\Http\Controllers\AlunoController@curso');
         Route::get('/tarefasDisciplinas/{id_disciplina}' ,'App\Http\Controllers\AlunoController@getTarefasById');
     });

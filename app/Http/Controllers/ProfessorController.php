@@ -14,4 +14,14 @@ class ProfessorController extends Controller
         $disciplina = Disciplina::where('professor_id', $id)->get();
 
     }
+
+       public function disciplinas(Request $request) {
+        
+        $id = $request->input('authenticated_user_id');
+
+        $disciplina = Disciplina::where('professor_id', $id)->get();
+
+        return response()->json($disciplina);
+
+    }
 }
