@@ -213,4 +213,19 @@ class DisciplinaController extends Controller
             'success' => 'Disciplina deletada'
         ], 201);
     }
+
+    public function getDisciplina(Request $disciplina_id)
+    {
+        
+        // Buscar todos os cursos relacionados à instituição
+        $disciplina = Disciplina::find($disciplina_id);
+
+        if($disciplina){
+            return response()->json($disciplina);
+        } else {
+            return response()->json(['error' => 'Disciplina não encontrada'], 404);
+        }
+        // Verificar se há cursos
+    }
+        
 }

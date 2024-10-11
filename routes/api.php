@@ -32,6 +32,8 @@ Route::get('/test', 'App\Http\Controllers\TestController@test');
 Route::middleware(['jwt.auth','retrieve.user'])->group(function (){
     
     Route::post('/logout', 'App\Http\Controllers\LoginRegisterController@logout');
+    
+    Route::get('/getDisciplina/{disciplina_id}', 'App\Http\Controllers\DisciplinaController@getDisciplina');
 
     //ROTA SOMENTE INSTITUIÇÃO
     Route::middleware('instituicao')->group( function (){
@@ -59,6 +61,7 @@ Route::middleware(['jwt.auth','retrieve.user'])->group(function (){
         Route::get('/myCurso', 'App\Http\Controllers\AlunoController@curso');
         Route::get('/tarefasDisciplinas/{id_disciplina}' ,'App\Http\Controllers\AlunoController@getTarefasById');
     });
+
 
     //ROTA PARA PEGAR O PERFIL DO USUÁRIO
     Route::get('/perfil', 'App\Http\Controllers\PerfilController@get_perfil');
