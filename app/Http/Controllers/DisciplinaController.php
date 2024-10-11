@@ -214,7 +214,7 @@ class DisciplinaController extends Controller
         ], 201);
     }
 
-    public function getDisciplina(Request $disciplina_id)
+    public function getDisciplina($disciplina_id)
     {
         
         // Buscar todos os cursos relacionados à instituição
