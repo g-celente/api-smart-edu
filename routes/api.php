@@ -32,9 +32,8 @@ Route::get('/test', 'App\Http\Controllers\TestController@test');
 Route::middleware(['jwt.auth','retrieve.user'])->group(function (){
     
     Route::post('/logout', 'App\Http\Controllers\LoginRegisterController@logout');
-    
     Route::get('/getDisciplina/{disciplina_id}', 'App\Http\Controllers\DisciplinaController@getDisciplina');
-
+    
     //ROTA SOMENTE INSTITUIÇÃO
     Route::middleware('instituicao')->group( function (){
         //ROTA DE REGISTO DE PROFESSOR E ALUNOS

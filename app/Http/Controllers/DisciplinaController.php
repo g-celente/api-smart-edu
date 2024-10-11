@@ -217,7 +217,8 @@ class DisciplinaController extends Controller
     public function getDisciplina($disciplina_id)
     {
         
-        // Buscar todos os cursos relacionados à instituição
+        //busca disciplina pelo ID
+        
         $disciplina = Disciplina::find($disciplina_id);
 
         if($disciplina){
