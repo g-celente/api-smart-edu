@@ -219,16 +219,14 @@ class DisciplinaController extends Controller
         
         //busca disciplina pelo ID
 
-        return response()->json(['mensagem' => "erro caraio"]);
+        $disciplina = Disciplina::find($disciplina_id);
 
-        // $disciplina = Disciplina::find($disciplina_id);
-
-        // if($disciplina){
-        //     return response()->json($disciplina);
-        // } else {
-        //     return response()->json(['error' => 'Disciplina não encontrada'], 404);
-        // }
-        // // Verificar se há cursos
+        if($disciplina){
+            return response()->json($disciplina);
+        } else {
+            return response()->json(['error' => 'Disciplina não encontrada'], 404);
+        }
+        // Verificar se há cursos
     }
         
 }
