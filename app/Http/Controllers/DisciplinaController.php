@@ -228,5 +228,22 @@ class DisciplinaController extends Controller
         }
         // Verificar se há cursos
     }
+
+    public function getProfessorDisciplina($disciplina_id)
+    {
+        
+        //busca disciplina pelo ID
+
+        $disciplina = Disciplina::find($disciplina_id);
+
+        $professor = User::where('id', $disciplina->professor_id)->first();
+
+        if($professor){
+            return response()->json($professor);
+        } else {
+            return response()->json(['error' => 'Disciplina não encontrada'], 404);
+        }
+        // Verificar se há cursos
+    }
         
 }
