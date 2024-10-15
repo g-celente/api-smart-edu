@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Curso;
 
+
 class AlunoCursoController extends Controller
 {
     /**
@@ -123,10 +124,15 @@ class AlunoCursoController extends Controller
      */
     public function show(Request $request, $id)
     {
-        $instituicaoId = $request->input('authenticated_user_id');
+        $usuarioId = $request->input('authenticated_user_id');
 
+        $usuario = User::where('id', $usuarioId)->first(); 
+
+        if(!$usuario){
+            return response()->json(['error' => 'usuario n achado pelo token'], 404);
+        }
         // Buscar o curso pelo ID e garantir que ele pertence à instituição autenticada
-        $curso = Curso::where('id', $id)->where('instituicao_id', $instituicaoId)->first();
+        $curso = Curso::where('id', $id)->where('instituicao_id', $usuario->instituicao_id)->first();
 
         // Se o curso não for encontrado ou não pertencer à instituição, retorna um erro 404
         if (!$curso) {
