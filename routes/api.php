@@ -34,7 +34,7 @@ Route::middleware(['jwt.auth','retrieve.user'])->group(function (){
     Route::post('/logout', 'App\Http\Controllers\LoginRegisterController@logout');
     Route::get('/getDisciplina/{disciplina_id}', 'App\Http\Controllers\DisciplinaController@getDisciplina');
     Route::apiResource('/alunosCursos', 'App\Http\Controllers\AlunoCursoController');
-    Route::apiResource('/getProfessorDisciplina', 'App\Http\Controllers\DisciplinaController@getProfessorDisciplina');
+    Route::get('/getProfessorDisciplina/{disciplina_id}', 'App\Http\Controllers\DisciplinaController@getProfessorDisciplina');
 
     
     //ROTA SOMENTE INSTITUIÇÃO
