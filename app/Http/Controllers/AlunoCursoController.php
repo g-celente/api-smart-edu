@@ -124,15 +124,22 @@ class AlunoCursoController extends Controller
      */
     public function show(Request $request, $id)
     {
+        $curso;
         $usuarioId = $request->input('authenticated_user_id');
-
+        
         $usuario = User::where('id', $usuarioId)->first(); 
 
         if(!$usuario){
             return response()->json(['error' => 'usuario n achado pelo token'], 404);
         }
+
+        if($usuario->type_id == 3){
+            $curso = Curso::where('id', $id)->where('instituicao_id', $usuario->id)->first();
+
+        } else {
+            $curso = Curso::where('id', $id)->where('instituicao_id', $usuario->instituicao_id)->first();
+        }
         // Buscar o curso pelo ID e garantir que ele pertence à instituição autenticada
-        $curso = Curso::where('id', $id)->where('instituicao_id', $usuario->instituicao_id)->first();
 
         // Se o curso não for encontrado ou não pertencer à instituição, retorna um erro 404
         if (!$curso) {
