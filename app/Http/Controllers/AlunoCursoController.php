@@ -124,7 +124,6 @@ class AlunoCursoController extends Controller
      */
     public function show(Request $request, $id)
     {
-        $curso;
         $usuarioId = $request->input('authenticated_user_id');
         
         $usuario = User::where('id', $usuarioId)->first(); 
