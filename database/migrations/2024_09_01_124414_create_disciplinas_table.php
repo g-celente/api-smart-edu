@@ -21,8 +21,8 @@ class CreateDisciplinasTable extends Migration
             $table->unsignedBigInteger('professor_id');
             $table->timestamps();
 
-            $table->foreign('curso_id')->references('id')->on('cursos');
-            $table->foreign('professor_id')->references('id')->on('users');
+            $table->foreign('curso_id')->references('id')->on('cursos')->onDelete('cascade');
+            $table->foreign('professor_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
