@@ -54,6 +54,7 @@ Route::middleware(['jwt.auth','retrieve.user'])->group(function (){
         Route::apiResource('/tarefas', 'App\Http\Controllers\TarefaController');
         Route::apiResource('/notas', 'App\Http\Controllers\NotaController');
         Route::get('/myDisciplinas', 'App\Http\Controllers\ProfessorController@disciplinas');
+        Route::apiResource('/materialComplementar', 'App\Http\Controllers\MaterialComplementarController');
 
     });
 
@@ -71,6 +72,8 @@ Route::middleware(['jwt.auth','retrieve.user'])->group(function (){
     Route::put('/updateSenha', 'App\Http\Controllers\PerfilController@update_password');
     
 });
+
+
 /*
 
 //MÉTODOS PARA INSTITUIÇÃO
