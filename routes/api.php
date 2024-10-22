@@ -54,6 +54,8 @@ Route::middleware(['jwt.auth','retrieve.user'])->group(function (){
     Route::middleware('professor')->group(function() {
         //TERMINAR DEPOIS IMPLEMENTAÇÃORoute::get('/alunosProf', 'App\Http\Controllers\ProfessorController@alunos');
         Route::apiResource('/tarefas', 'App\Http\Controllers\TarefaController');
+        Route::delete('/deletarTarefa', 'App\Http\Controllers\TarefaController@deleteTaskById');
+
         Route::apiResource('/notas', 'App\Http\Controllers\NotaController');
         Route::get('/myDisciplinas', 'App\Http\Controllers\ProfessorController@disciplinas');
         Route::apiResource('/materialComplementar', 'App\Http\Controllers\MaterialComplementarController');

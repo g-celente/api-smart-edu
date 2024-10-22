@@ -166,15 +166,32 @@ class TarefaController extends Controller
     }
 
   public function getTaskById(Request $request, $tarefa_id)
-{
-    // Agora $request está disponível
-    $id = $request->input('authenticated_user_id');
-    $tarefa = Tarefa::find($tarefa_id);
+    {
+        // Agora $request está disponível
+        $id = $request->input('authenticated_user_id');
+        $tarefa = Tarefa::find($tarefa_id);
 
-    if ($tarefa) {
-        return response()->json($tarefa);
-    } else {
-        return response()->json(['error' => 'Tarefa não encontrada'], 404);
+        if ($tarefa) {
+            return response()->json($tarefa);
+        } else {
+            return response()->json(['error' => 'Tarefa não encontrada'], 404);
+        }
     }
-}
+
+
+  public function deleteTaskById(Request $request, $tarefa_id)
+    {
+        // Agora $request está disponível
+        $id = $request->input('authenticated_user_id');
+        $tarefa = Tarefa::find($tarefa_id);
+
+        if ($tarefa) {
+            $tarefa->delete();
+            return response()->json([
+                'success' => 'tarefa deletada'
+            ], 200);
+        } else {
+            return response()->json(['error' => 'Tarefa não encontrada'], 404);
+        }
+    }
 }
