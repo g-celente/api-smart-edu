@@ -164,4 +164,18 @@ class TarefaController extends Controller
         ], 404);
         
     }
+
+    public function getTaskById($tarefa_id)
+    {
+        $id = $request->input('authenticated_user_id');
+        $tarefa = tarefa::find($tarefa_id);
+
+
+        if($tarefa){
+            return response()->json($tarefa);
+        } else {
+            return response()->json(['error' => 'Tarefa não encontrada'],404);
+        }
+        
+    }
 }
