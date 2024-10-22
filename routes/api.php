@@ -34,7 +34,6 @@ Route::middleware(['jwt.auth','retrieve.user'])->group(function (){
     Route::post('/logout', 'App\Http\Controllers\LoginRegisterController@logout');
     Route::get('/getDisciplina/{disciplina_id}', 'App\Http\Controllers\DisciplinaController@getDisciplina');
     Route::get('/getTarefa/{tarefa_id}', 'App\Http\Controllers\TarefaController@getTaskById');
-
     Route::apiResource('/alunosCursos', 'App\Http\Controllers\AlunoCursoController');
     Route::get('/getProfessorDisciplina/{disciplina_id}', 'App\Http\Controllers\DisciplinaController@getProfessorDisciplina');
 
@@ -54,8 +53,7 @@ Route::middleware(['jwt.auth','retrieve.user'])->group(function (){
     Route::middleware('professor')->group(function() {
         //TERMINAR DEPOIS IMPLEMENTAÇÃORoute::get('/alunosProf', 'App\Http\Controllers\ProfessorController@alunos');
         Route::apiResource('/tarefas', 'App\Http\Controllers\TarefaController');
-        Route::delete('/deletarTarefa', 'App\Http\Controllers\TarefaController@deleteTaskById');
-
+        Route::delete('/deletarTarefa{tarefa_id}', 'App\Http\Controllers\TarefaController@deleteTaskById');
         Route::apiResource('/notas', 'App\Http\Controllers\NotaController');
         Route::get('/myDisciplinas', 'App\Http\Controllers\ProfessorController@disciplinas');
         Route::apiResource('/materialComplementar', 'App\Http\Controllers\MaterialComplementarController');
