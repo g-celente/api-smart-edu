@@ -36,6 +36,8 @@ Route::middleware(['jwt.auth','retrieve.user'])->group(function (){
     Route::get('/getTarefa/{tarefa_id}', 'App\Http\Controllers\TarefaController@getTaskById');
     Route::apiResource('/alunosCursos', 'App\Http\Controllers\AlunoCursoController');
     Route::get('/getProfessorDisciplina/{disciplina_id}', 'App\Http\Controllers\DisciplinaController@getProfessorDisciplina');
+    Route::apiResource('/materiais', 'App\Http\Controllers\MaterialAtividadeController');
+    Route::apiResource('/avisos', 'App\Http\Controllers\AvisoController');
 
     
     //ROTA SOMENTE INSTITUIÇÃO
@@ -56,7 +58,6 @@ Route::middleware(['jwt.auth','retrieve.user'])->group(function (){
         Route::delete('/deletarTarefa/{tarefa_id}', 'App\Http\Controllers\TarefaController@deleteTaskById');
         Route::apiResource('/notas', 'App\Http\Controllers\NotaController');
         Route::get('/myDisciplinas', 'App\Http\Controllers\ProfessorController@disciplinas');
-        Route::apiResource('/materialComplementar', 'App\Http\Controllers\MaterialComplementarController');
 
     });
 
