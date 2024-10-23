@@ -13,10 +13,9 @@ class CreateMaterialComplementarsTable extends Migration
      */
     public function up()
     {
-        Schema::create('material_complementar', function (Blueprint $table) {
+        Schema::create('material_atividade', function (Blueprint $table) {
             $table->id();
             $table->string('titulo', 100);
-            $table->text('descricao');
             $table->text('material');
             $table->unsignedBigInteger('tarefa_id');
             $table->timestamps();

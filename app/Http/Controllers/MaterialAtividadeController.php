@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\MaterialComplementar;
+use App\Models\MaterialAtividade;
+use App\Models\Disciplina;
 use App\Models\Tarefa;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-class MaterialComplementarController extends Controller
+class MaterialAtividadeController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -40,10 +41,8 @@ class MaterialComplementarController extends Controller
      */
     public function store(Request $request)
     {
-        
        $credentials = $request->validate([
             'titulo' => 'required',
-            'descricao' => 'required',
             'material' => 'required|file|mimes:docx,xlsx,pdf,jpeg,png|max:10240',
             'tarefa_id' => 'required'
         ]);
@@ -52,7 +51,7 @@ class MaterialComplementarController extends Controller
 
         if (!$tarefa) {
             return response()->json([
-                'error' => "tarefa {$request->tarefa_id} não econtrada"
+                'error' => "tarefa {$request->tarefa_id} não encontrada"
             ]);
         }
 
@@ -60,9 +59,8 @@ class MaterialComplementarController extends Controller
         $material_url = $material->store('materiais', 'public');
 
         try {
-            $result = MaterialComplementar::create([
+            $result = MaterialAtividade::create([
                 'titulo' => $request->titulo,
-                'descricao' => $request->descricao,
                 'material' => $material_url,
                 'tarefa_id' => $request->tarefa_id
             ]);
@@ -82,40 +80,45 @@ class MaterialComplementarController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\MaterialComplementar  $materialComplementar
+     * @param  \App\Models\MaterialAtividade  $MaterialAtividade
      * @return \Illuminate\Http\Response
      */
-    public function show(MaterialComplementar $materialComplementar, Request $request)
+    public function show($tarefa_id, Request $request)
     {
         $professor_id = $request->input('authenticated_user_id');
 
-        // Obter todos os IDs de tarefas associados ao professor
-        $tarefas = Tarefa::where('professor_id', $professor_id)->pluck('id');
+        // Verificar se a tarefa existe e pertence ao professor
+        $tarefa = Tarefa::where('id', $tarefa_id)
+                        ->where('professor_id', $professor_id)
+                        ->first();
 
-        // Verificar se o material complementar pertence a uma das tarefas do professor
-        $material = MaterialComplementar::where('id', $materialComplementar->id)
-                                        ->whereIn('tarefa_id', $tarefas) // Usar whereIn para comparar com a lista de IDs
-                                        ->first();
-
-        // Se o material não for encontrado ou não for da tarefa do professor
-        if (!$material) {
+        if (!$tarefa) {
             return response()->json([
-                'error' => 'Material não cadastrado pelo professor'
+                'error' => "Tarefa com ID $tarefa_id não encontrada ou não pertence ao professor"
             ], 404);
         }
 
-        // Retorna o material encontrado
-        return response()->json($material, 200);
+        // Obter todos os materiais associados à tarefa
+        $materiais = MaterialAtividade::where('tarefa_id', $tarefa->id)->get();
+
+        // Se não houver materiais cadastrados para a tarefa
+        if ($materiais->isEmpty()) {
+            return response()->json([
+                'error' => 'Nenhum material cadastrado para esta tarefa'
+            ], 404);
+        }
+
+        return response()->json($materiais, 200);
     }
 
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\MaterialComplementar  $materialComplementar
+     * @param  \App\Models\MaterialAtividade  $MaterialAtividade
      * @return \Illuminate\Http\Response
      */
-    public function edit(MaterialComplementar $materialComplementar)
+    public function edit(MaterialAtividade $MaterialAtividade)
     {
         //
     }
@@ -124,22 +127,46 @@ class MaterialComplementarController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\MaterialComplementar  $materialComplementar
+     * @param  \App\Models\MaterialAtividade  $MaterialAtividade
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, MaterialComplementar $materialComplementar)
+    public function update(Request $request, MaterialAtividade $materialAtividade)
     {
-        //
+        $material = MaterialAtividade::find($materialAtividade);
+
+        if (!$material) {
+            return response()->json([
+                'error' => 'material não encontrado'
+            ], 404);
+        }
+
+        $material->update($request->all());
+
+        return response()->json([
+            'success' => 'material atualizado'
+        ], 200);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\MaterialComplementar  $materialComplementar
+     * @param  \App\Models\MaterialAtividade  $MaterialAtividade
      * @return \Illuminate\Http\Response
      */
-    public function destroy(MaterialComplementar $materialComplementar)
+    public function destroy(MaterialAtividade $materialAtividade)
     {
-        //
+        $material = MaterialAtividade::find($materialAtividade);
+
+        if (!$material) {
+            return response()->json([
+                'error' => 'material não encontrado'
+            ], 404);
+        }
+
+        $material->delete();
+
+        return response()->json([
+            'success' => 'material deletado com sucesso'
+        ], 200);
     }
 }
