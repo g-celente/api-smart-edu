@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\MaterialAtividade;
 use App\Models\Disciplina;
 use App\Models\Tarefa;
-use Exception;
+use FFI\Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 

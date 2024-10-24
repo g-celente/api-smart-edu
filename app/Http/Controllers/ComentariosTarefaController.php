@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ComentariosTarefa;
 use App\Models\Tarefa;
 use Illuminate\Http\Request;
-use Exception;
+use FFI\Exception;
 
 class ComentariosTarefaController extends Controller
 {

@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Aviso;
 use Illuminate\Http\Request;
 use App\Models\Disciplina;
-use Exception;
+use FFI\Exception;
 
 class AvisoController extends Controller
 {
