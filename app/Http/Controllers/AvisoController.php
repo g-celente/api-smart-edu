@@ -138,9 +138,9 @@ class AvisoController extends Controller
      * @param  \App\Models\Aviso  $aviso
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Aviso $aviso)
+    public function destroy(Request $request, $aviso_id)
     {
-        $aviso = Aviso::find($aviso);
+        $aviso = Aviso::where('id', $aviso_id)->first();
 
         if (!$aviso) {
             return response()->json([
