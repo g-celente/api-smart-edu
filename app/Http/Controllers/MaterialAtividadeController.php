@@ -101,6 +101,12 @@ class MaterialAtividadeController extends Controller
         // Obter todos os materiais associados à tarefa
         $materiais = MaterialAtividade::where('tarefa_id', $tarefa->id)->get();
 
+        // Adicionar o URL completo ao material
+        $materiais->transform(function ($material) {
+            $material->material = Storage::url($material->material);
+            return $material;
+        });
+
         // Se não houver materiais cadastrados para a tarefa
         if ($materiais->isEmpty()) {
             return response()->json([
@@ -110,6 +116,7 @@ class MaterialAtividadeController extends Controller
 
         return response()->json($materiais, 200);
     }
+
 
 
     /**
