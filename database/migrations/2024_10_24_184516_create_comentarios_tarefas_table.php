@@ -16,7 +16,7 @@ class CreateComentariosTarefasTable extends Migration
         Schema::create('comentarios_tarefa', function (Blueprint $table) {
             $table->id();
             $table->text('comentario');
-            $table->unsignedInteger('user_id');
+            $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('tarefa_id');
             $table->timestamps();
 
