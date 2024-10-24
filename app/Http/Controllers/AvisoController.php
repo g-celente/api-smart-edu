@@ -42,6 +42,7 @@ class AvisoController extends Controller
         $professor_id = $request->input('authenticated_user_id');
 
         $credentials = $request->validate([
+            'titulo' => 'required',
             'aviso' => 'required',
             'disciplina_id' => 'required'
         ]);
@@ -56,6 +57,7 @@ class AvisoController extends Controller
 
         try {
             $aviso = Aviso::create([
+                'titulo' => $request->titulo,
                 'aviso' => $request->aviso,
                 'disciplina_id' => $request->disciplina_id
             ]);
