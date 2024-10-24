@@ -194,4 +194,15 @@ class TarefaController extends Controller
             return response()->json(['error' => 'Tarefa não encontrada'], 404);
         }
     }
+
+    public function getTarefaDisciplina(Request $request, $disciplina_id) {
+
+        $tarefas = Tarefa::where('disciplina_id', $disciplina_id)->get();
+
+        if ($tarefas->isEmpty()) {
+            return response()->json(['error' => 'nenhuma tarefa encontrada'], 404);
+        }
+
+        return response()->json($tarefas, 200);
+    } 
 }
