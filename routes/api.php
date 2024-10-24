@@ -40,7 +40,13 @@ Route::middleware(['jwt.auth','retrieve.user'])->group(function (){
     Route::apiResource('/avisos', 'App\Http\Controllers\AvisoController');
     Route::get('getTarefasDisciplinas/{disciplina_id}', 'App\Http\Controllers\TarefaController@getTarefaDisciplina');
 
-    
+    Route::prefix('/comentarios')->group(function (){
+        Route::post('/store', 'App\Http\Controllers\ComentariosTarefaController@store');
+        Route::delete('/delete/{comentario_id}', 'App\Http\Controllers\ComentariosTarefaController@destroy');
+        Route::get('/get/{tarefa_id}', 'App\Http\Controllers\ComentariosTarefaController@getComentariosPorTarefa');
+    });
+
+
     //ROTA SOMENTE INSTITUIÇÃO
     Route::middleware('instituicao')->group( function (){
         //ROTA DE REGISTO DE PROFESSOR E ALUNOS

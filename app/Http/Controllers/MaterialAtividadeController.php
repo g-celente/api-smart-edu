@@ -56,7 +56,8 @@ class MaterialAtividadeController extends Controller
         }
 
         $material = $request->file('material');
-        $material_url = $material->store('materiais', 'public');
+        $material_path = $material->store('materiais', 'public');
+        $material_url = Storage::url($material_path);
 
         try {
             $result = MaterialAtividade::create([
@@ -100,12 +101,7 @@ class MaterialAtividadeController extends Controller
 
         // Obter todos os materiais associados à tarefa
         $materiais = MaterialAtividade::where('tarefa_id', $tarefa->id)->get();
-
-        // Adicionar o URL completo ao material
-        $materiais->transform(function ($material) {
-            $material->material = Storage::url($material->material);
-            return $material;
-        });
+        $material_url = Storage::url($materiais->material);
 
         // Se não houver materiais cadastrados para a tarefa
         if ($materiais->isEmpty()) {
@@ -114,7 +110,10 @@ class MaterialAtividadeController extends Controller
             ], 404);
         }
 
-        return response()->json($materiais, 200);
+        return response()->json([
+            'titulo' => $materiais->titulo,
+            'url' => $material_url
+        ]);
     }
 
 

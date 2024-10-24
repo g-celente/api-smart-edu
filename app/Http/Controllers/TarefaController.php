@@ -150,7 +150,7 @@ class TarefaController extends Controller
     public function destroy(Tarefa $tarefa, Request $request)
     {
         $id = $request->input('authenticated_user_id');
-        $tarefa = Tarefa::where('professor_id', $id)->where('id', $tarefa)->get();
+        $tarefa = Tarefa::where('professor_id', $id)->where('id', $tarefa)->first();
 
         if ($tarefa) {
             $tarefa->delete();
