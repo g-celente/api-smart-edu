@@ -108,12 +108,6 @@ class MaterialAtividadeController extends Controller
             ], 404);
         }
 
-        // Iterar sobre a coleção e adicionar o URL completo ao material
-        $materiais->transform(function ($material) {
-            $material->material_url = Storage::url($material->material);  // Adiciona a URL pública
-            return $material;
-        });
-
         // Retornar os materiais com a URL
         return response()->json($materiais, 200);
     }
