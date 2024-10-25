@@ -73,7 +73,7 @@ Route::middleware(['jwt.auth','retrieve.user'])->group(function (){
     Route::middleware('user')->group(function() {
         Route::get('/myNotas/{tarefa_id}', 'App\Http\Controllers\AlunoController@notas');
         Route::get('/myTarefas', 'App\Http\Controllers\AlunoController@tarefas');
-        Route::get('/myCurso', 'App\Http\Controllers\AlunoController@curso');
+        Route::get('/myCursos', 'App\Http\Controllers\AlunoController@meusCursos');
         Route::get('/tarefasDisciplinas/{id_disciplina}' ,'App\Http\Controllers\AlunoController@getTarefasById');
     });
 

@@ -52,17 +52,32 @@ class AlunoController extends Controller
 
         return response()->json([$disciplinas]);
     }   
-    public function curso(Request $request) {
-        $alunoId = $request->input('authenticated_user_id');
 
-        $cursos = AlunoCurso::where('aluno_id', $alunoId)->get();
+ public function meusCursos(Request $request) {
+    $alunoId = $request->input('authenticated_user_id');
 
-        if ($cursos->isEmpty()) {
-            return response()->json([]);
+    // Busca os relacionamentos entre aluno e cursos
+    $relacionamentos = AlunoCurso::where('aluno_id', $alunoId)->get();
+
+    // Array para armazenar os cursos completos
+    $cursos = [];
+
+    // Itera sobre cada relacionamento para buscar o curso correspondente
+    foreach ($relacionamentos as $relacionamento) {
+        $curso = Curso::find($relacionamento->curso_id);
+        if ($curso) {
+            $cursos[] = $curso;
         }
-
-        return response()->json($cursos, 200);
     }
+
+    // Verifica se há cursos encontrados
+    if (empty($cursos)) {
+        return response()->json([]);
+    }
+
+    // Retorna os dados dos cursos
+    return response()->json($cursos, 200);
+}
 
     public function getTarefasById($id_disciplina) {
 
