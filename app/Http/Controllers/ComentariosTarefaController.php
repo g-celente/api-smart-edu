@@ -40,7 +40,7 @@ class ComentariosTarefaController extends Controller
         $user_id = $request->input('authenticated_user_id');
 
         $credentials = $request->validate([
-            'comentario ' => 'required',
+            'comentario' => 'required',
             'tarefa_id' => 'required'
         ]);
 
@@ -140,13 +140,11 @@ class ComentariosTarefaController extends Controller
 
     public function getComentariosPorTarefa (Request $request, $tarefa_id) {
 
-        $user_id = $request->input('authenticated_user_id');
-
-        $tarefas = ComentariosTarefa::where('tarefa_id', $tarefa_id)->where('user_id', $user_id)->get();
+        $tarefas = ComentariosTarefa::where('tarefa_id', $tarefa_id)->get();
 
         if ($tarefas->isEmpty()) {
             return response()->json([
-                'error' => "nenhum comentário para a tarefa $tarefa_id ou para o usuário $user_id"
+                'error' => "nenhum comentário para a tarefa $tarefa_id"
             ], 404);
         }
 
