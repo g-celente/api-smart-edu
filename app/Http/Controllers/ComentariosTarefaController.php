@@ -161,6 +161,7 @@ class ComentariosTarefaController extends Controller
                     'user' => [
                         'id' => $user->id,
                         'user_img' => $user->user_img,
+                        'nome' => $user->nome,
                         'email' => $user->email,
                         'type_id' => $user->type_id
                     ]
