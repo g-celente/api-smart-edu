@@ -245,5 +245,19 @@ class DisciplinaController extends Controller
         }
         // Verificar se há cursos
     }
+
+      public function getDisciplinasByCursoId($curso_id)
+        {
+            // Busca todas as disciplinas que pertencem ao curso_id fornecido
+            $disciplinas = Disciplina::where('curso_id', $curso_id)->get();
+
+            // Verifica se há disciplinas encontradas
+            if ($disciplinas->isEmpty()) {
+                return response()->json(['error' => 'Disciplinas não encontradas'], 404);
+            }
+
+            // Retorna as disciplinas encontradas
+            return response()->json($disciplinas);
+        }
         
 }
