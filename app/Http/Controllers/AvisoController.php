@@ -152,4 +152,17 @@ class AvisoController extends Controller
 
         return response()->json(['success' => 'aviso deletado'], 200);
     }
+
+    public function getAvisoById(Request $request, $aviso_id)
+    {
+        // Agora $request está disponível
+        $id = $request->input('authenticated_user_id');
+        $aviso = Aviso::find($aviso_id);
+
+        if ($aviso) {
+            return response()->json($aviso);
+        } else {
+            return response()->json(['error' => 'Tarefa não encontrada'], 404);
+        }
+    }
 }
