@@ -139,32 +139,32 @@ class ComentariosTarefaController extends Controller
         }
     }
 
-    public function getComentariosPorTarefa(Request $request, $tarefa_id) {
-        $user_id = $request->input('authenticated_user_id');
-        $user = User::where('id', $user_id)->first();
-    
+    public function getComentariosPorTarefa(Request $request, $tarefa_id) 
+    {
         $tarefas = ComentariosTarefa::where('tarefa_id', $tarefa_id)->get();
-    
+
         if ($tarefas->isEmpty()) {
             return response()->json([
-                'error' => "nenhum comentário para a tarefa $tarefa_id"
+                'error' => "Nenhum comentário para a tarefa $tarefa_id"
             ], 404);
         }
-    
-        // Retornar todos os comentários como uma lista
+
+        // Retornar todos os comentários como uma lista, incluindo dados do autor de cada comentário
         return response()->json([
-            'comentarios' => $tarefas->map(function($comentario) use ($user) {
+            'comentarios' => $tarefas->map(function($comentario) {
+                $autor = User::find($comentario->user_id); // Buscar o autor do comentário
+                
                 return [
                     'id' => $comentario->id,
                     'comentario' => $comentario->comentario,
                     'tarefa_id' => $comentario->tarefa_id,
-                    'user' => [
-                        'id' => $user->id,
-                        'user_img' => $user->user_img,
-                        'nome' => $user->nome,
-                        'email' => $user->email,
-                        'type_id' => $user->type_id
-                    ]
+                    'user' => $autor ? [
+                        'id' => $autor->id,
+                        'user_img' => $autor->user_img,
+                        'nome' => $autor->nome,
+                        'email' => $autor->email,
+                        'type_id' => $autor->type_id
+                    ] : null // Retornar null se o autor não for encontrado
                 ];
             })
         ]);

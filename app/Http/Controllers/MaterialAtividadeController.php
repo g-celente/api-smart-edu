@@ -90,12 +90,11 @@ class MaterialAtividadeController extends Controller
 
         // Verificar se a tarefa existe e pertence ao professor
         $tarefa = Tarefa::where('id', $tarefa_id)
-                        ->where('professor_id', $professor_id)
                         ->first();
 
         if (!$tarefa) {
             return response()->json([
-                'error' => "Tarefa com ID $tarefa_id não encontrada ou não pertence ao professor"
+                'error' => "Tarefa com ID $tarefa_id não encontrada"
             ], 404);
         }
 

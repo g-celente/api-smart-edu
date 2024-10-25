@@ -81,12 +81,11 @@ class AvisoController extends Controller
      */
     public function show(Request $request, $disciplina_id)
     {
-        $professor_id = $request->input('authenticated_user_id'); 
-        $disciplina = Disciplina::where('id', $disciplina_id)->where('professor_id', $professor_id)->first();
+        $disciplina = Disciplina::where('id', $disciplina_id)->first();
 
         if (!$disciplina) {
             return response()->json([
-                'error' => "disciplina com id $disciplina_id não encontrada ou você não leciona"
+                'error' => "disciplina com id $disciplina_id não encontrada"
             ],404);
         }
         
