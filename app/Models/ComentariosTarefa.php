@@ -10,4 +10,5 @@ class ComentariosTarefa extends Model
     use HasFactory;
 
     protected $table = 'comentarios_tarefa';
+    protected $fillable = ['comentario', 'user_id', 'tarefa_id'];
 }
