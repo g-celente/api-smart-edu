@@ -38,7 +38,7 @@ Route::middleware(['jwt.auth','retrieve.user'])->group(function (){
     Route::get('/getProfessorDisciplina/{disciplina_id}', 'App\Http\Controllers\DisciplinaController@getProfessorDisciplina');
     Route::apiResource('/materiais', 'App\Http\Controllers\MaterialAtividadeController');
     Route::apiResource('/avisos', 'App\Http\Controllers\AvisoController');
-    Route::apiResource('/getAviso/{aviso_id}', 'App\Http\Controllers\AvisoController@getAvisoById');
+    Route::get('/getAviso/{aviso_id}', 'App\Http\Controllers\AvisoController@getAvisoById');
 
     Route::get('getTarefasDisciplinas/{disciplina_id}', 'App\Http\Controllers\TarefaController@getTarefaDisciplina');
 
