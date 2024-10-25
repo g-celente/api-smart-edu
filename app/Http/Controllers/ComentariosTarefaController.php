@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ComentariosTarefa;
+use App\Models\User;
 use App\Models\Tarefa;
 use Illuminate\Http\Request;
 use FFI\Exception;
@@ -138,17 +139,32 @@ class ComentariosTarefaController extends Controller
         }
     }
 
-    public function getComentariosPorTarefa (Request $request, $tarefa_id) {
-
+    public function getComentariosPorTarefa(Request $request, $tarefa_id) {
+        $user_id = $request->input('authenticated_user_id');
+        $user = User::where('id', $user_id)->first();
+    
         $tarefas = ComentariosTarefa::where('tarefa_id', $tarefa_id)->get();
-
+    
         if ($tarefas->isEmpty()) {
             return response()->json([
                 'error' => "nenhum comentário para a tarefa $tarefa_id"
             ], 404);
         }
-
-        return response()->json($tarefas);
-
+    
+        // Retornar todos os comentários como uma lista
+        return response()->json([
+            'comentarios' => $tarefas->map(function($comentario) use ($user) {
+                return [
+                    'id' => $comentario->id,
+                    'comentario' => $comentario->comentario,
+                    'tarefa_id' => $comentario->tarefa_id,
+                    'user' => [
+                        'id' => $user->id,
+                        'user_img' => $user->user_img,
+                        'email' => $user->email
+                    ]
+                ];
+            })
+        ]);
     }
 }
