@@ -6,6 +6,9 @@ use App\Models\Disciplina;
 use App\Models\Tarefa;
 use Illuminate\Http\Request;
 use App\Models\Curso;
+use App\Models\EnviarTarefa;
+use App\Models\AlunoCurso;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 
 use function PHPUnit\Framework\isEmpty;
 
@@ -205,4 +208,150 @@ class TarefaController extends Controller
 
         return response()->json($tarefas, 200);
     } 
+
+    public function enviarTarefa(Request $request) {
+
+        $aluno_id = $request->input('authenticated_user_id');
+
+        $credentials = $request->validate([
+            'tarefa_id' => 'required',
+            'texto' => 'nullable|string',
+            'arquivo' => 'nullable|file|mimes:pdf,docx,png,jpeg|max:10240'
+        ]);
+
+
+        $tarefaEnviada = EnviarTarefa::where('aluno_id', $aluno_id)
+            ->where('tarefa_id', $request->tarefa_id)
+            ->first();
+
+        if ($tarefaEnviada) {
+            return response()->json(['error' => 'Você já enviou essa tarefa'], 400);
+        }
+
+        $arquivoUrl = null;
+
+        if ($request->hasFile('arquivo')) {
+            $arquivo = $request->file('arquivo');
+            $arquivoUrl = $arquivo->store('tarefas_enviadas', 'public'); // Salvar arquivo no storage
+        }
+
+        try {
+            // Criar envio da tarefa
+            $tarefaEnviada = EnviarTarefa::create([
+                'aluno_id' => $aluno_id,
+                'tarefa_id' => $request->tarefa_id,
+                'texto' => $request->texto, // Texto enviado pelo aluno
+                'arquivo' => $arquivoUrl, // URL do arquivo
+                'status' => 'concluida', // Marcar como concluída
+                'data_envio' => now(), // Data de envio
+            ]);
+
+            return response()->json([
+                'success' => 'Tarefa enviada com sucesso',
+                'tarefa_enviada' => $tarefaEnviada
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function tarefasAlunos(Request $request, $disciplina_id)
+    {
+        // Pega o ID do aluno autenticado
+        $aluno_id = $request->input('authenticated_user_id');
+        
+        // Busca todas as tarefas associadas à disciplina
+        $tarefasDisciplina = Tarefa::where('disciplina_id', $disciplina_id)->get();
+
+        if ($tarefasDisciplina->isEmpty()) {
+            return response()->json([
+                'error' => 'Nenhuma tarefa cadastrada para essa disciplina.'
+            ], 404);
+        }
+
+        // Prepara arrays para armazenar tarefas concluídas e não concluídas
+        $tarefasConcluidas = [];
+        $tarefasNaoConcluidas = [];
+
+        foreach ($tarefasDisciplina as $tarefa) {
+            // Verifica se o aluno já enviou a tarefa e se está concluída
+            $enviada = EnviarTarefa::where('aluno_id', $aluno_id)
+                                ->where('tarefa_id', $tarefa->id)
+                                ->first();
+            
+            if ($enviada && $enviada->status == 'concluida') {
+                $tarefasConcluidas[] = $tarefa;
+            } else {
+                $tarefasNaoConcluidas[] = $tarefa;
+            }
+        }
+
+        // Retorna as tarefas divididas em concluídas e não concluídas
+        return response()->json([
+            'tarefasConcluidas' => $tarefasConcluidas,
+            'tarefasNaoConcluidas' => $tarefasNaoConcluidas
+        ], 200);
+    }
+
+    public function tarefasConcluidas(Request $request){
+        $aluno_id = $request->input('authenticated_user_id');
+
+        $tarefasAluno = EnviarTarefa::where('aluno_id', $aluno_id)->where('status', 'concluida')->get();
+
+        if ($tarefasAluno->isEmpty()) {
+            return response()->json([
+                'error' => 'nenhum tarefa enviada'
+            ], 404);
+        }
+
+        return response()->json($tarefasAluno, 200);
+    }
+
+    public function statusTarefasAluno(Request $request)
+    {
+        $aluno_id = $request->input('authenticated_user_id');
+
+        // Obtém todos os IDs dos cursos que o aluno está matriculado
+        $curso_aluno = AlunoCurso::where('aluno_id', $aluno_id)->pluck('curso_id');
+        
+        // Busca todas as disciplinas relacionadas aos cursos do aluno
+        $disciplinas = Disciplina::whereIn('curso_id', $curso_aluno)->pluck('id');
+        
+        // Busca todas as tarefas relacionadas às disciplinas
+        $tarefas = Tarefa::whereIn('disciplina_id', $disciplinas)->get();
+
+        $tarefasConcluidas = [];
+        $tarefasNaoConcluidas = [];
+
+        // Itera sobre as tarefas para verificar o status de envio
+        foreach ($tarefas as $tarefa) {
+            // Verifica se o aluno já enviou a tarefa e se está concluída
+            $enviada = EnviarTarefa::where('aluno_id', $aluno_id)
+                                    ->where('tarefa_id', $tarefa->id)
+                                    ->first();
+            
+            if ($enviada && $enviada->status == 'concluida') {
+                $tarefasConcluidas[] = $tarefa;
+            } else {
+                $tarefasNaoConcluidas[] = $tarefa;
+            }
+        }
+
+        // Verifica se o aluno não possui tarefas cadastradas
+        if ($tarefas->isEmpty()) {
+            return response()->json([
+                'error' => 'Nenhuma tarefa cadastrada para este aluno'
+            ], 404);
+        }
+
+        // Retorna as tarefas divididas em concluídas e não concluídas
+        return response()->json([
+            'tarefasConcluidas' => $tarefasConcluidas,
+            'tarefasNaoConcluidas' => $tarefasNaoConcluidas
+        ], 200);
+    }
+
 }

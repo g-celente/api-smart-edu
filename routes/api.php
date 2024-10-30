@@ -40,6 +40,8 @@ Route::middleware(['jwt.auth','retrieve.user'])->group(function (){
     Route::apiResource('/avisos', 'App\Http\Controllers\AvisoController');
     Route::get('/getAviso/{aviso_id}', 'App\Http\Controllers\AvisoController@getAvisoById');
     Route::get('/getDisciplinas/{curso_id}', 'App\Http\Controllers\DisciplinaController@getDisciplinasByCursoId');
+    Route::get('/getStatusTodasTarefas', 'App\Http\Controllers\TarefaController@statusTarefasAluno');
+    Route::post('/enviarTarefa', 'App\Http\Controllers\TarefaController@enviarTarefa');
 
 
     Route::get('getTarefasDisciplinas/{disciplina_id}', 'App\Http\Controllers\TarefaController@getTarefaDisciplina');
