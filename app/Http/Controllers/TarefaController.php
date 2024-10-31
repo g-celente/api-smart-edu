@@ -168,7 +168,7 @@ class TarefaController extends Controller
         
     }
 
-  public function getTaskById(Request $request, $tarefa_id)
+    public function getTaskById(Request $request, $tarefa_id)
     {
         // Agora $request está disponível
         $id = $request->input('authenticated_user_id');
@@ -182,7 +182,7 @@ class TarefaController extends Controller
     }
 
 
-  public function deleteTaskById(Request $request, $tarefa_id)
+    public function deleteTaskById(Request $request, $tarefa_id)
     {
         // Agora $request está disponível
         $id = $request->input('authenticated_user_id');
@@ -255,6 +255,18 @@ class TarefaController extends Controller
             return response()->json([
                 'error' => $e->getMessage()
             ], 500);
+        }
+    }
+    public function getStatusTarefa(Request $request, $tarefa_id) {
+
+        $aluno_id = $request->input('authenticated_user_id');
+
+        $tarefaEnviada = EnviarTarefa::where('aluno_id', $aluno_id)
+            ->where('tarefa_id', $tarefa_id)
+            ->first();
+
+        if ($tarefaEnviada) {
+            return response()->json($tarefaEnviada);
         }
     }
 
