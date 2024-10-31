@@ -267,6 +267,8 @@ class TarefaController extends Controller
 
         if ($tarefaEnviada) {
             return response()->json($tarefaEnviada);
+        } else {
+            return response()->json(null);
         }
     }
 
