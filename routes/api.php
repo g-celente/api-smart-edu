@@ -48,6 +48,12 @@ Route::middleware(['jwt.auth','retrieve.user'])->group(function (){
 
     Route::get('getTarefasDisciplinas/{disciplina_id}', 'App\Http\Controllers\TarefaController@getTarefaDisciplina');
 
+    Route::prefix('/comentariosAviso')->group(function (){
+        Route::post('/store', 'App\Http\Controllers\ComentariosAvisoController@store');
+        Route::delete('/delete/{comentario_id}', 'App\Http\Controllers\ComentariosAvisoController@destroy');
+        Route::get('/get/{aviso_id}', 'App\Http\Controllers\ComentariosAvisoController@getComentariosPorAviso');
+    });
+
     Route::prefix('/comentarios')->group(function (){
         Route::post('/store', 'App\Http\Controllers\ComentariosTarefaController@store');
         Route::delete('/delete/{comentario_id}', 'App\Http\Controllers\ComentariosTarefaController@destroy');

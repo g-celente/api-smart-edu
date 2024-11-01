@@ -92,7 +92,7 @@ class AvisoController extends Controller
         $avisos = Aviso::where('disciplina_id', $disciplina_id)->get();
 
         if ($avisos->isEmpty()) {
-            return response()->json(['not found' => 'nenhum aviso cadastrado']);
+            return response()->json(['not found' => 'nenhum aviso cadastrado'], 404);
         }
         return response()->json($avisos);
 
