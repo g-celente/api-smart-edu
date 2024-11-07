@@ -94,7 +94,7 @@ public function getTarefasById($id_disciplina) {
 
 public function getAlunoById($aluno_id) {
 
-    $aluno = Aluno::find($aluno_id)->get();
+    $aluno = User::find($aluno_id)->get();
     
     if ($aluno) {
         return response()->json($aluno);
