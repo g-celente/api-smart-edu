@@ -79,17 +79,30 @@ class AlunoController extends Controller
     return response()->json($cursos, 200);
 }
 
-    public function getTarefasById($id_disciplina) {
+public function getTarefasById($id_disciplina) {
 
-        $tarefas = Tarefa::where('disciplina_id', $id_disciplina)->get();
-        
-        if ($tarefas->isEmpty()) {
-            return response()->json([
-                'error' => 'Nenhuma tarefa encontrada'
-            ],404);
-        }
-        
-        return response()->json($tarefas);
+    $tarefas = Tarefa::where('disciplina_id', $id_disciplina)->get();
+    
+    if ($tarefas->isEmpty()) {
+        return response()->json([
+            'error' => 'Nenhuma tarefa encontrada'
+        ],404);
     }
+    
+    return response()->json($tarefas);
+}
+
+public function getAlunoById($aluno_id) {
+
+    $aluno = Aluno::find($aluno_id)->get();
+    
+    if ($aluno) {
+        return response()->json($aluno);
+    } else {
+        return response()->json(['error'=> 'aluno não encontrado'], 400);
+    }
+    
+    return response()->json($tarefas);
+}
 
 }
