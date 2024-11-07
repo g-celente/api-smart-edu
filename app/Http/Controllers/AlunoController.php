@@ -94,7 +94,7 @@ public function getTarefasById($id_disciplina) {
 
 public function getAlunoById($aluno_id) {
 
-    $aluno = User::find($aluno_id)->get();
+    $aluno = User::find($aluno_id);
     
     if ($aluno) {
         return response()->json($aluno);
@@ -102,7 +102,6 @@ public function getAlunoById($aluno_id) {
         return response()->json(['error'=> 'aluno não encontrado'], 400);
     }
     
-    return response()->json($tarefas);
 }
 
 }
