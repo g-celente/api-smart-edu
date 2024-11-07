@@ -79,6 +79,8 @@ Route::middleware(['jwt.auth','retrieve.user'])->group(function (){
         Route::delete('/deletarTarefa/{tarefa_id}', 'App\Http\Controllers\TarefaController@deleteTaskById');
         Route::apiResource('/notas', 'App\Http\Controllers\NotaController');
         Route::get('/myDisciplinas', 'App\Http\Controllers\ProfessorController@disciplinas');
+        Route::get('/quantidadeAlunos', 'App\Http\Controllers\ProfessorController@quantidadeAlunos');
+        Route::get('/quantidadeDisciplinas', 'App\Http\Controllers\ProfessorController@quantidadeDisciplinas');
 
     });
 
