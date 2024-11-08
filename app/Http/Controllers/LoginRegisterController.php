@@ -170,5 +170,23 @@ class LoginRegisterController extends Controller
             ], 500);
         }
     }
+
+    public function recoverPassword(Request $request)
+    {
+        $email = $request->input('email');
+        $novaSenha = $request->input('nova_senha')
+        
+        $user = User::where('email', $email)->first();
+
+        if (!$user) {
+            return response()->json(['error' => 'Conta não encontrada'], 404);
+        }
+
+        $user->update([
+            'senha' => Hash::make($novaSenha),
+        ]);
+
+        return response()->json($user);
+    }
 }
 

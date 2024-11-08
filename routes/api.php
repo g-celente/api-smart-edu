@@ -32,6 +32,8 @@ Route::get('/test', 'App\Http\Controllers\TestController@test');
 Route::middleware(['jwt.auth','retrieve.user'])->group(function (){
     
     Route::post('/logout', 'App\Http\Controllers\LoginRegisterController@logout');
+    Route::post('/recuperarSenha', 'App\Http\Controllers\LoginRegisterController@recoverPassword');
+
     Route::get('/getDisciplina/{disciplina_id}', 'App\Http\Controllers\DisciplinaController@getDisciplina');
     Route::get('/getTarefa/{tarefa_id}', 'App\Http\Controllers\TarefaController@getTaskById');
     Route::apiResource('/alunosCursos', 'App\Http\Controllers\AlunoCursoController');
