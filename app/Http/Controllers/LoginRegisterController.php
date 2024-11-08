@@ -174,7 +174,7 @@ class LoginRegisterController extends Controller
     public function recoverPassword(Request $request)
     {
         $email = $request->input('email');
-        $novaSenha = $request->input('nova_senha')
+        $novaSenha = $request->input('nova_senha');
         
         $user = User::where('email', $email)->first();
 
