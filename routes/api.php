@@ -26,13 +26,14 @@ Route::get('/', function () {
 //ROTAS PARA REGISTRO E LOGIN INSTITUIÇÃO
 Route::post('/register', 'App\Http\Controllers\LoginRegisterController@registerInstituicao');
 Route::post('/login', 'App\Http\Controllers\LoginRegisterController@login');
+Route::post('/recuperarSenha', 'App\Http\Controllers\LoginRegisterController@recoverPassword');
+
 Route::put('/forgotPassword', 'App\Http\Controllers\LoginRegisterController@update_password');
 Route::get('/test', 'App\Http\Controllers\TestController@test');
 
 Route::middleware(['jwt.auth','retrieve.user'])->group(function (){
     
     Route::post('/logout', 'App\Http\Controllers\LoginRegisterController@logout');
-    Route::post('/recuperarSenha', 'App\Http\Controllers\LoginRegisterController@recoverPassword');
 
     Route::get('/getDisciplina/{disciplina_id}', 'App\Http\Controllers\DisciplinaController@getDisciplina');
     Route::get('/getTarefa/{tarefa_id}', 'App\Http\Controllers\TarefaController@getTaskById');
