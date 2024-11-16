@@ -49,6 +49,7 @@ Route::middleware(['jwt.auth','retrieve.user'])->group(function (){
     Route::get('/getAluno/{aluno_id}', 'App\Http\Controllers\AlunoController@getAlunoById');
     Route::get('/getTarefasEntregues/{disciplina_id}', 'App\Http\Controllers\ProfessorController@getTarefasEntregues');
     Route::get('/getTarefasENotas/{disciplina_id}', 'App\Http\Controllers\AlunoController@getTarefasENotas');
+    Route::get('/getEnvioTarefaById/{envio_id}', 'App\Http\Controllers\TarefaController@getEnvioTarefaById');
 
 
 

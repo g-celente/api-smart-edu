@@ -368,4 +368,8 @@ class TarefaController extends Controller
         ], 200);
     }
 
+    public function getEnvioTarefaById(Request $request, $envio_id) {
+        return response()->json([$envio_tarefa = EnviarTarefa::where('id', $envio_id)->first()]);
+    }
+
 }
