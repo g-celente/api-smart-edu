@@ -105,5 +105,60 @@ class ProfessorController extends Controller
             'porcentagem_de_envio' => round($porcentagemEnvio, 2) // Arredondado para 2 casas decimais
         ], 200);
     }
+    public function getTarefasEntregues(Request $request, $disciplina_id)
+    {
+        // ID do professor autenticado
+        $professor_id = $request->input('authenticated_user_id');
+
+        // Verificar se a disciplina existe e se o professor leciona nela
+        $disciplina = Disciplina::where('id', $disciplina_id)
+                                ->where('professor_id', $professor_id)
+                                ->first();
+
+        if (!$disciplina) {
+            return response()->json(['error' => 'Disciplina não encontrada ou o professor não leciona nessa disciplina'], 404);
+        }
+
+        // Buscar todas as tarefas relacionadas à disciplina
+        $tarefas = Tarefa::where('disciplina_id', $disciplina_id)->get();
+
+        if ($tarefas->isEmpty()) {
+            return response()->json(['error' => 'Nenhuma tarefa encontrada para essa disciplina'], 404);
+        }
+
+        // Obter todas as entregas de tarefas relacionadas às tarefas da disciplina
+        $entregas = EnviarTarefa::whereIn('tarefa_id', $tarefas->pluck('id'))->get();
+
+        if ($entregas->isEmpty()) {
+            return response()->json(['error' => 'Nenhuma tarefa entregue encontrada para essa disciplina'], 404);
+        }
+
+        // Preparar o response
+        $response = $entregas->map(function ($entrega) {
+            // Buscar os dados do aluno com base no aluno_id
+            $tarefa = Tarefa::find($entrega->tarefa_id);
+            $aluno = User::find($entrega->aluno_id);
+
+            if (!$aluno) {
+                return [
+                    'error' => 'Aluno não encontrado'
+                ];
+            }
+
+            // Retornar as informações necessárias
+            return [
+                'usuario_id' => $aluno->id,
+                'usuario_nome' => $aluno->nome,
+                'usuario_img' => $aluno->user_img,
+                'tarefa_id' => $entrega->tarefa_id,
+                'tarefa_nome' => $tarefa->nome,
+                'entrega_id' => $entrega->id,
+                'data_entregue' => $entrega->created_at
+            ];
+        });
+
+        return response()->json($response, 200);
+    }
+
 
 }

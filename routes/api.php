@@ -47,7 +47,8 @@ Route::middleware(['jwt.auth','retrieve.user'])->group(function (){
     Route::post('/enviarTarefa', 'App\Http\Controllers\TarefaController@enviarTarefa');
     Route::get('/getStatusTarefa/{tarefa_id}', 'App\Http\Controllers\TarefaController@getStatusTarefa');
     Route::get('/getAluno/{aluno_id}', 'App\Http\Controllers\AlunoController@getAlunoById');
-
+    Route::get('/getTarefasEntregues/{disciplina_id}', 'App\Http\Controllers\ProfessorController@getTarefasEntregues');
+    Route::get('/getTarefasENotas/{disciplina_id}', 'App\Http\Controllers\AlunoController@getTarefasENotas');
 
 
 
