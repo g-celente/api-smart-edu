@@ -95,9 +95,16 @@ class NotaController extends Controller
         $notas = Nota::where('aluno_id', $request->aluno_id)->where('tarefa_id', $request->tarefa_id)->first();
 
         if($notas) {
+            $notas->update([
+                'nota' => $request->nota,
+                'aluno_id' => $request->aluno_id,
+                'tarefa_id' => $request->tarefa_id
+            ]);
+    
             return response()->json([
-                'error' => 'nota já cadastrada'
-            ], 404);
+                'success' => 'nota alterada',
+                'nota' => $notas
+            ], 200);
         }
         // Criar a nota
         $nota = Nota::create([

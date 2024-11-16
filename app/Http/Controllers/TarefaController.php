@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\Curso;
 use App\Models\EnviarTarefa;
 use App\Models\AlunoCurso;
+use App\Models\Nota;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 
 use function PHPUnit\Framework\isEmpty;
@@ -369,7 +370,14 @@ class TarefaController extends Controller
     }
 
     public function getEnvioTarefaById(Request $request, $envio_id) {
-        return response()->json([$envio_tarefa = EnviarTarefa::where('id', $envio_id)->first()]);
+
+        $envio_tarefa = EnviarTarefa::where('id', $envio_id)->first();
+        $nota_tarefa = Nota::where('tarefa_id', $envio_tarefa->tarefa_id)->first();
+
+        return response()->json([
+            'envio' => $envio_tarefa,
+            'nota_tarefa' => $nota_tarefa->nota
+        ]);
     }
 
 }
