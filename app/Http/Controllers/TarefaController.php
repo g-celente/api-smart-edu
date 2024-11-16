@@ -370,13 +370,19 @@ class TarefaController extends Controller
     }
 
     public function getEnvioTarefaById(Request $request, $envio_id) {
-
         $envio_tarefa = EnviarTarefa::where('id', $envio_id)->first();
+    
+        if (!$envio_tarefa) {
+            return response()->json([
+                'error' => 'Envio de tarefa não encontrado.',
+            ], 404);
+        }
+    
         $nota_tarefa = Nota::where('tarefa_id', $envio_tarefa->tarefa_id)->first();
-
+    
         return response()->json([
             'envio' => $envio_tarefa,
-            'nota_tarefa' => $nota_tarefa->nota
+            'nota_tarefa' => $nota_tarefa ? $nota_tarefa->nota : null, // Retorna explicitamente null
         ]);
     }
 
